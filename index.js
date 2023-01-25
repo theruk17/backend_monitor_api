@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 
 app.get('/monitor' , (req, res) => {
   connection.query(
-    'SELECT * FROM pd_monitor',
+    'SELECT * FROM pd_monitor WHERE mnt_status="Y"',
     function(err, results, fields) {
       res.send(results)
     }
