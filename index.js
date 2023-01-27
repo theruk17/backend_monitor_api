@@ -36,7 +36,7 @@ app.put('/edit/:id' , (req, res) => {
   connection.query(
     `UPDATE pd_monitor SET 'mnt_group' = ?, 'mnt_brand' = ?, 'mnt_model' = ?, 'mnt_size' = ?, 'mnt_refresh_rate' = ?, 
     'mnt_panel' = ?, 'mnt_resolution' = ?, mnt_price_srp = ?, mnt_price_w_com = ? WHERE mnt_id = ?`,
-    [req.body.brand, req.body.model, req.body.size, req.body.hz, req.body.panel, req.body.resolution,req.body.price_srp, req.body.price, id], (err, result) => {
+    ["test", req.body.brand, req.body.model, req.body.size, req.body.hz, req.body.panel, req.body.resolution,req.body.price_srp, req.body.price, id], (err, result) => {
       if(err) throw err
       res.send("Data updated")
     }
