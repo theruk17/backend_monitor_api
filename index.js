@@ -31,8 +31,7 @@ app.get('/admin_data' , (req, res) => {
 })
 
 app.get('/edit/:id' , (req, res) => {
-  const { id} = req.params
-  const {brand, model} = req.body
+  const {brand, model,id} = req.body
   connection.query(
     'UPDATE pd_monitor SET mnt_brand = ?, mnt_model = ? WHERE mnt_id = ?',
     [brand, model, id], (err, result) => {
