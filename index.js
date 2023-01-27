@@ -21,4 +21,13 @@ app.get('/monitor' , (req, res) => {
   )
 })
 
+app.get('/admin_data' , (req, res) => {
+  connection.query(
+    'SELECT * FROM pd_monitor',
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+})
+
 app.listen(process.env.PORT || 3000)
