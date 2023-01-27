@@ -30,7 +30,7 @@ app.get('/admin_data' , (req, res) => {
   )
 })
 
-app.get('/edit/:id' , (req, res) => {
+app.post('/edit/:id' , (req, res) => {
   const { id} = req.params
   const {brand, model, size, hz, panel, resolution, price_srp, price} = req.body
   connection.query(
