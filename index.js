@@ -30,12 +30,15 @@ app.get('/admin_data' , (req, res) => {
   )
 })
 
-app.get('/data_group' , (req, res) => {
+app.get('/edit/:id' , (req, res) => {
+  const {brand, model} = req.body
   connection.query(
-    'SELECT * FROM pd_monitor',
-    function(err, results, fields) {
-      res.send(results)
+    'UPDATE pd_monitor SET mnt_brand = ?, mnt_model = ? WHERE mnt_id = ?',
+    [brand, model, req.body.id], (err, result) => {
+      if(err) throw err
+      res.json(result)
     }
+    
   )
 })
 
