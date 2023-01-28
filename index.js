@@ -31,6 +31,16 @@ app.get('/admin_data' , (req, res) => {
   )
 })
 
+app.get('/edit_data/:id' , (req, res) => {
+  connection.query(
+    'SELECT * FROM pd_monitor WHERE mnt_id = ?',
+    [id],
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+})
+
 app.put('/edit/:id' , (req, res) => {
   const { id }  = req.params
   const { group, brand, model, size, hz, panel, resolution, price_srp, price } = req.body
