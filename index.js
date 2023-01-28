@@ -31,8 +31,8 @@ app.get('/admin_data' , (req, res) => {
   )
 })
 
-app.put('/edit/:id' , (req, res) => {
-  const { id} = req.params.id
+app.put('/edit' , (req, res) => {
+  const { id } = req.params.id
   connection.query(
     `UPDATE pd_monitor SET 'mnt_group' = ?, 'mnt_brand' = ?, 'mnt_model' = ?, 'mnt_size' = ?, 'mnt_refresh_rate' = ?, 
     'mnt_panel' = ?, 'mnt_resolution' = ?, mnt_price_srp = ?, mnt_price_w_com = ? WHERE mnt_id = ?`,
