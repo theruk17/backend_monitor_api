@@ -32,6 +32,7 @@ app.get('/admin_data' , (req, res) => {
 })
 
 app.get('/edit_data/:id' , (req, res) => {
+  const { id }  = req.params
   connection.query(
     'SELECT * FROM pd_monitor WHERE mnt_id = ?',
     [id],
