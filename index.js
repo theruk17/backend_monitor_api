@@ -39,6 +39,7 @@ app.put('/edit' , (req, res) => {
     ["test", req.body.brand, req.body.model, req.body.size, req.body.hz, req.body.panel, req.body.resolution,req.body.price_srp, req.body.price, id], (err, result) => {
       if(err) throw err
       res.send("Data updated")
+      console.log(result)
     }
     
   )
