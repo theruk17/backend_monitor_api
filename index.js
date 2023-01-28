@@ -38,7 +38,7 @@ app.put('/edit/:id' , (req, res) => {
     mnt_panel = ?, mnt_resolution = ?, mnt_price_srp = ?, mnt_price_w_com = ? WHERE mnt_id = ?`,
     [group, brand, model, size, hz, panel, resolution, price_srp, price, id], (err, result) => {
       if(err) throw err
-      res.send("Data updated")
+      res.send("Data updated successsfully")
     }
     
   )
