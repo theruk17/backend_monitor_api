@@ -44,11 +44,11 @@ app.get('/edit_data/:id' , (req, res) => {
 
 app.put('/edit/:id' , (req, res) => {
   const { id }  = req.params
-  const { group, brand, model, size, hz, panel, resolution, curve, price_srp, price_w_com, } = req.body
+  const { group, brand, model, size, hz, panel, resolution, curve, status, price_srp, price_w_com, } = req.body
   connection.query(
     `UPDATE pd_monitor SET mnt_group = ?, mnt_brand = ?, mnt_model = ?, mnt_size = ?, mnt_refresh_rate = ?, 
-    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_price_srp = ?, mnt_price_w_com = ? WHERE mnt_id = ?`,
-    [group, brand, model, size, hz, panel, resolution, curve, price_srp, price_w_com, id], (err, result) => {
+    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_status = ?, mnt_price_srp = ?, mnt_price_w_com = ? WHERE mnt_id = ?`,
+    [group, brand, model, size, hz, panel, resolution, curve, status, price_srp, price_w_com, id], (err, result) => {
       if(err) throw err
       res.send("Data updated successsfully")
     }
