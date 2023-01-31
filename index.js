@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 app.get('/monitor' , (req, res) => {
   connection.query(
-    'SELECT * FROM pd_monitor WHERE mnt_status="Y" ORDER BY mnt_group ASC',
+    'SELECT * FROM pd_monitor WHERE mnt_status="Y" ORDER BY mnt_group, mnt_price_w_com ASC',
     function(err, results, fields) {
       res.send(results)
     }
