@@ -56,4 +56,12 @@ app.put('/edit/:id' , (req, res) => {
   )
 })
 
+app.delete("/admin_del/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_monitor WHERE mnt_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
 app.listen(process.env.PORT || 3000)
