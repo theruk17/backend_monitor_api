@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.get('/monitor' , (req, res) => {
   connection.query(
-    'SELECT * FROM pd_monitor WHERE mnt_status="Y"',
+    'SELECT * FROM pd_monitor WHERE mnt_status="Y" ORDER BY mnt_group, mnt_price_w_com ASC',
     function(err, results, fields) {
       res.send(results)
     }
@@ -28,7 +28,7 @@ app.get('/monitor' , (req, res) => {
 
 app.get('/admin_data' , (req, res) => {
   connection.query(
-    'SELECT * FROM pd_monitor',
+    'SELECT * FROM pd_monitor ORDER BY mnt_brand ASC',
     function(err, results, fields) {
       res.send(results)
     }
