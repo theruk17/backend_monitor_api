@@ -74,7 +74,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
       connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_group, mnt_brand) VALUES ('${row[0]}', '${row[1]}', '${row[2]}') ON DUPLICATE KEY UPDATE mnt_id = '${row[0]}', mnt_group = '${row[1]}', mnt_brand = '${row[2]}'`),
       (err, result) => {
         if (err) throw err;
-        res.send('File uploaded and data inserted into MySQL.');
+        res.send('done');
       };
     })
   })
