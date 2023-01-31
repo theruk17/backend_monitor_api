@@ -1,11 +1,15 @@
 const express = require('express')
 const cors = require('cors')
+const multer = require('multer')
+const readXlsxFile = require('read-excel-file')
 const mysql = require('mysql2')
 require('dotenv').config()
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+const upload = multer()
 
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 
@@ -63,5 +67,17 @@ app.delete("/admin_del/:id", (req, res) => {
     res.send("Delete Data Successsfully");
   });
 });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  readXlsxFile(req.file.buffer).then((rows) => {
+    rows.forEach(row => {
+      connection.query('INSERT INTO pd_monitor (mnt_id, mnt_group, mnt_brand) VALUE (?, ?, ?) ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_group = ?, mnt_brand = ?'),
+      [row[0], row[1], row[2]], (err, result) => {
+        if (err) throw err;
+        res.send('File uploaded and data inserted into MySQL.');
+      };
+    })
+  })
+})
 
 app.listen(process.env.PORT || 3000)
