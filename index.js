@@ -70,7 +70,7 @@ app.delete("/admin_del/:id", (req, res) => {
 
 app.post('/upload', upload.single('file'), (req, res) => {
   readXlsxFile(req.file.buffer).then((rows) => {
-    connection.connect();
+    //connection.connect();
     rows.forEach(row => {
       connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_group, mnt_brand) VALUES ('${row[0]}', '${row[1]}', '${row[2]}') ON DUPLICATE KEY UPDATE mnt_id = '${row[0]}', mnt_group = '${row[1]}', mnt_brand = '${row[2]}'`),
       (err, result) => {
@@ -78,7 +78,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`);
       };
     });
-    connection.end();
+    //connection.end();
     res.status(200).send({ status: 'done' });
   })
 })
