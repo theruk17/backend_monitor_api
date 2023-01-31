@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const multer = require('multer')
-const readXlsxFile = require('read-excel-file')
+const readXlsxFile = require('read-excel-file/node')
 const mysql = require('mysql2')
 require('dotenv').config()
 const app = express()
