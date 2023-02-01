@@ -98,4 +98,41 @@ app.post('/upload', upload.single('file'), (req, res) => {
   })
 })
 
+//-----------------
+
+app.get('/case' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_case WHERE case_status="Y" ORDER BY case_group, case_price_srp ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_case' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_case ORDER BY case_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+})
+
+app.post('/upload_case', upload.single('file'), (req, res) => {
+  readXlsxFile(req.file.buffer).then((rows) => {
+    //connection.connect();
+    rows.forEach(row => {
+      connection.query(`INSERT INTO pd_case (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) 
+      VALUES ('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${row[6]}', '${row[7]}', '${row[8]}') 
+      ON DUPLICATE KEY UPDATE case_id = '${row[0]}', case_group = '${row[1]}', case_brand = '${row[2]}', case_model = '${row[3]}', case_color = '${row[4]}', case_img = '${row[5]}', case_status = '${row[6]}', case_href = '${row[7]}', case_price_srp = '${row[8]}'`),
+      (err, result) => {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`);
+      };
+    });
+    //connection.end();
+    res.status(200).send({ status: 'done' });
+  })
+})
+
 app.listen(process.env.PORT || 3000)
