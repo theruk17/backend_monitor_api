@@ -98,7 +98,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
   })
 })
 
-//-----------------
+//----------------- CASE 
 
 app.get('/case' , (req, res) => {
   connection.query(
@@ -116,7 +116,35 @@ app.get('/admin_data_case' , (req, res) => {
       res.send(results)
     }
   )
+});
+
+app.put('/edit_status_case/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_case SET case_status = ? WHERE case_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.put('/edit_case/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, status, price_srp } = req.body
+  connection.query(
+    `UPDATE pd_case SET case_group = ?, case_brand = ?, case_model = ?, case_color = ?, 
+     case_status = ?, case_price_srp = ? WHERE case_id = ?`,
+    [group, brand, model, color, status, price_srp, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
 })
+
 
 app.post('/upload_case', upload.single('file'), (req, res) => {
   readXlsxFile(req.file.buffer).then((rows) => {
