@@ -115,7 +115,7 @@ app.put('/update_img_mnt/:id' , (req, res) => {
 
 app.get('/case' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_case WHERE case_status="Y" ORDER BY case_group, case_brand, case_model ASC`,
+    `SELECT * FROM pd_case WHERE case_status="Y" ORDER BY case_group, case_brand, case_model, case_color ASC`,
     function(err, results, fields) {
       res.send(results)
     }
@@ -124,7 +124,7 @@ app.get('/case' , (req, res) => {
 
 app.get('/admin_data_case' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_case ORDER BY case_brand,case_model ASC`,
+    `SELECT * FROM pd_case ORDER BY case_brand,case_model,case_color ASC`,
     function(err, results, fields) {
       res.send(results)
     }
