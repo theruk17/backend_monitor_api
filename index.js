@@ -145,6 +145,19 @@ app.put('/edit_case/:id' , (req, res) => {
   )
 })
 
+app.put('/update_img_case/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_case SET case_img = ? WHERE case_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
 
 app.post('/upload_case', upload.single('file'), (req, res) => {
   readXlsxFile(req.file.buffer).then((rows) => {
