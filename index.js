@@ -98,6 +98,19 @@ app.post('/upload', upload.single('file'), (req, res) => {
   })
 })
 
+app.put('/update_img_mnt/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_monitor SET mnt_img = ? WHERE mnt_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
 //----------------- CASE 
 
 app.get('/case' , (req, res) => {
