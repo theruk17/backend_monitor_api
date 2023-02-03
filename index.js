@@ -152,7 +152,7 @@ app.put('/update_img_case/:id' , (req, res) => {
     `UPDATE pd_case SET case_img = ? WHERE case_id = ?`,
     [imageUrl, id], (err, result) => {
       if(err) throw err
-      res.send("Data updated successsfully")
+      res.send("Image uploaded successfully!")
     }
     
   )
