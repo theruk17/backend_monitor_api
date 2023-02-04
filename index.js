@@ -175,13 +175,13 @@ app.put('/update_img_case/:id' , (req, res) => {
 app.post('/upload_case', upload.single('file'), async (req, res) => {
   await readXlsxFile(req.file.buffer).then((rows) => {
     //connection.connect();
-    rows.forEach(row => {
-      connection.query(`INSERT INTO pd_test (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) 
-      VALUES ('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${row[6]}', '${row[7]}', '${row[8]}')`),
-      (err, result) => {
+    rows.forEach((row) => {
+      connection.query("INSERT INTO pd_test (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]],
+      function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`);
-      };
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
     });
     //connection.end();
     res.status(200).send({ status: 'done' });
