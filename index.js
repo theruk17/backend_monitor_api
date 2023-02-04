@@ -192,7 +192,7 @@ app.post('/upload_case', upload.single('file'), (req, res) => {
 
 app.post("/test_upload", async (req, res) => {
   try {
-    const data = await readXlsxFile(req.files.file.data);
+    const data = await readXlsxFile(req.files.data);
     data.forEach((row) => {
       connection.query(`INSERT INTO pd_test (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) 
       VALUES ('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${row[6]}', '${row[7]}', '${row[8]}') 
