@@ -96,15 +96,24 @@ app.delete("/admin_del/:id", (req, res) => {
   });
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
-  readXlsxFile(req.file.buffer).then((rows) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
+  await readXlsxFile(req.file.buffer, { sheet: 'UPDATE MNT DATA' }).then((rows) => {
     //connection.connect();
+    
+    rows = rows.slice(1);
     rows.forEach(row => {
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_group, mnt_brand) VALUES ('${row[0]}', '${row[1]}', '${row[2]}') ON DUPLICATE KEY UPDATE mnt_id = '${row[0]}', mnt_group = '${row[1]}', mnt_brand = '${row[2]}'`),
-      (err, result) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_model, mnt_resolution, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_resolution = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
+      [row[0], row[1], row[2], row[3], row[7], row[8],
+        row[0], row[2], row[3], row[7], row[8]],
+      function (err, result) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`);
-      };
+      });
+    
     });
     //connection.end();
     res.status(200).send({ status: 'done' });
@@ -186,11 +195,16 @@ app.put('/update_img_case/:id' , (req, res) => {
 
 
 app.post('/upload_case', upload.single('file'), async (req, res) => {
-  await readXlsxFile(req.file.buffer).then((rows) => {
+  await readXlsxFile(req.file.buffer, { sheet: 'CASE' }).then((rows) => {
     //connection.connect();
+    rows = rows.slice(1);
     rows.forEach((row) => {
-      connection.query("INSERT INTO pd_test (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]],
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_case (case_id, case_model, case_price_srp) VALUES (?, ?, ?) 
+      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?`,
+      [row[0], row[1], row[5], row[0], row[5]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -202,22 +216,5 @@ app.post('/upload_case', upload.single('file'), async (req, res) => {
 });
 
 
-app.post("/test_upload", async (req, res) => {
-  try {
-    const data = await readXlsxFile(req.files.file.data);
-    data.forEach((row) => {
-      connection.query(`INSERT INTO pd_test (case_id, case_group, case_brand, case_model, case_color, case_img, case_status, case_href, case_price_srp) 
-      VALUES ('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${row[6]}', '${row[7]}', '${row[8]}') 
-      ON DUPLICATE KEY UPDATE case_id = '${row[0]}', case_group = '${row[1]}', case_brand = '${row[2]}', case_model = '${row[3]}', case_color = '${row[4]}', case_img = '${row[5]}', case_status = '${row[6]}', case_href = '${row[7]}', case_price_srp = '${row[8]}'`),
-      function (err, results, fields) {
-        if (err) throw err;
-      }
-    })
-    res.send("File uploaded and data inserted into the database");
-
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-})
 
 app.listen(process.env.PORT || 3000)
