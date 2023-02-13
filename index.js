@@ -105,10 +105,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_model, mnt_resolution, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
-      [row[0], row[1], row[2], row[3], row[7], row[8],
-        row[0], row[7], row[8]],
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
+      [row[0], row[1], row[2], row[3], row[4], row[7], row[8],
+        row[0], row[3], row[4], row[7], row[8]],
       function (err, result) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`);
