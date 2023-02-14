@@ -235,7 +235,7 @@ app.post('/upload_nb', upload.single('file'), async (req, res) => {
         return;
       }
       connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp, nb_min_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_min_price = ?`,
+      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_min_price = ?`,
       [row[0], row[9], row[1], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6],
       row[0], row[9], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6]],
       function (err, result, fields) {
