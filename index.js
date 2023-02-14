@@ -217,6 +217,15 @@ app.post('/upload_case', upload.single('file'), async (req, res) => {
 
 //----------------- NOTEBOOK ----------------
 
+app.get('/nb' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_nb WHERE nb_status="Y"`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
 app.get('/admin_data_nb' , (req, res) => {
   connection.query(
     `SELECT * FROM pd_nb ORDER BY nb_brand ASC`,
