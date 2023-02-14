@@ -249,6 +249,40 @@ app.put('/edit_nb/:id' , (req, res) => {
   )
 })
 
+app.put('/edit_status_nb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_nb SET nb_status = ? WHERE nb_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.put('/update_img_nb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_nb SET nb_img = ? WHERE nb_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.delete("/admin_del_nb/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_nb WHERE nb_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
 app.post('/upload_nb', upload.single('file'), async (req, res) => {
   await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
     //connection.connect();
