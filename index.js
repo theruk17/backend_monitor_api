@@ -235,6 +235,20 @@ app.get('/admin_data_nb' , (req, res) => {
   )
 });
 
+app.put('/edit_nb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, status, price_srp, min_price } = req.body
+  connection.query(
+    `UPDATE pd_nb SET nb_group = ?, nb_brand = ?, nb_model = ?, nb_color = ?, 
+     nb_status = ?, nb_price_srp = ?, nb_min_price = ? WHERE nb_id = ?`,
+    [group, brand, model, color, status, price_srp, min_price, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
 app.post('/upload_nb', upload.single('file'), async (req, res) => {
   await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
     //connection.connect();
