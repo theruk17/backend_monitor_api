@@ -217,6 +217,15 @@ app.post('/upload_case', upload.single('file'), async (req, res) => {
 
 //----------------- NOTEBOOK ----------------
 
+app.get('/admin_data_nb' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_nb ORDER BY nb_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
 app.post('/upload_nb', upload.single('file'), async (req, res) => {
   await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
     //connection.connect();
