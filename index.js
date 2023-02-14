@@ -215,6 +215,28 @@ app.post('/upload_case', upload.single('file'), async (req, res) => {
   })
 });
 
+//----------------- NOTEBOOK ----------------
 
+app.post('/upload_nb', upload.single('file'), async (req, res) => {
+  await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp, nb_min_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_min_price = ?`,
+      [row[0], row[9], row[1], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6],
+      row[0], row[9], row[1], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    res.status(200).send({ status: 'done' });
+  })
+});
 
 app.listen(process.env.PORT || 3000)
