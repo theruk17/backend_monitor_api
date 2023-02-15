@@ -116,9 +116,48 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     
     });
     //connection.end();
-    res.status(200).send({ status: 'done' });
   })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'CASE' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(1);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_case (case_id, case_model, case_price_srp) VALUES (?, ?, ?) 
+      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?`,
+      [row[0], row[1], row[5], row[0], row[5]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+  })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp, nb_min_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_min_price = ?`,
+      [row[0], row[9], row[1], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6],
+      row[0], row[9], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+  res.status(200).send({ status: 'done' });
 })
+
 
 app.put('/update_img_mnt/:id' , (req, res) => {
   const { id }  = req.params
