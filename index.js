@@ -237,7 +237,7 @@ app.put('/update_img_case/:id' , (req, res) => {
 
 app.get('/nb' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_nb WHERE nb_status="Y"`,
+    `SELECT * FROM pd_nb WHERE nb_status="Y" ORDER BY CASE nb_group WHEN "Gaming" THEN 1 WHEN "Non-gaming" THEN 2 END, nb_brand, nb_price_srp ASC`,
     function(err, results, fields) {
       res.send(results)
     }
