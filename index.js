@@ -145,8 +145,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       }
       connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
       ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?`,
-      [row[0], row[12], row[1], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[8],
-      row[0], row[12], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[8]],
+      [row[0], row[12], row[1], row[13], row[14], row[16], row[17], row[18], row[19], row[20], row[8],
+      row[0], row[12], row[13], row[14], row[16], row[17], row[18], row[19], row[20], row[8]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
