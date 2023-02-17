@@ -105,10 +105,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
-      [row[0], row[1], row[2], row[3], row[4], row[8], row[9],
-        row[0], row[3], row[4], row[8], row[9]],
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_brand, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
+      [row[0], row[5], row[1], row[2], row[3], row[4], row[9], row[10],
+        row[0], row[5], row[3], row[4], row[9], row[10]],
       function (err, result) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`);
@@ -145,8 +145,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       }
       connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
       ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?`,
-      [row[0], row[9], row[1], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5],
-      row[0], row[9], row[10], row[12], row[13], row[14], row[15], row[16], row[17], row[5]],
+      [row[0], row[12], row[1], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[8],
+      row[0], row[12], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[8]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
