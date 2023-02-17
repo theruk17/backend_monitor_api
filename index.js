@@ -106,7 +106,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         return;
       }
       connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_brand, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_brand = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
       [row[0], row[5], row[1], row[2], row[3], row[4], row[9], row[10],
         row[0], row[5], row[3], row[4], row[9], row[10]],
       function (err, result) {
