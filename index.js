@@ -301,5 +301,15 @@ app.delete("/admin_del_nb/:id", (req, res) => {
   });
 });
 
+app.put('/update_stock_nb' , (req, res) => {
+  connection.query(
+    "UPDATE pd_nb SET nb_status = 'N' WHERE nb_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
 
 app.listen(process.env.PORT || 3000)
