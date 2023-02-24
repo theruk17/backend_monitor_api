@@ -37,6 +37,17 @@ app.get('/admin_data' , (req, res) => {
   )
 })
 
+app.put('/update_stock_mnt' , (req, res) => {
+  connection.query(
+    "UPDATE pd_monitor SET mnt_status = 'N' WHERE mnt_stock = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
 /* app.post('/create_mnt' , (req, res) => {
   const { id, group, brand, model, size, hz, panel, resolution, curve, status, price_srp, price_w_com } = req.body
   connection.query(
@@ -105,10 +116,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_brand = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?`,
-      [row[0], row[5], row[1], row[2], row[3], row[4], row[9], row[10],
-        row[0], row[5], row[3], row[4], row[9], row[10]],
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com, mnt_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_brand = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?, mnt_stock = ?`,
+      [row[0], row[5], row[1], row[2], row[3], row[4], row[9], row[10], row[6],
+        row[0], row[5], row[3], row[4], row[9], row[10], row[6]],
       function (err, result) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`);
