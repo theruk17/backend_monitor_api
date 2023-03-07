@@ -394,7 +394,7 @@ app.put('/update_img_lc/:id' , (req, res) => {
   const { id }  = req.params
   const { imageUrl } = req.body;
   connection.query(
-    `UPDATE pd_lc SET lc_img = ? WHERE lc_id = ?`,
+    `UPDATE pd_liquid SET lc_img = ? WHERE lc_id = ?`,
     [imageUrl, id], (err, result) => {
       if(err) throw err
       res.send("Image uploaded successfully!")
