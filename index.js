@@ -166,6 +166,26 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     //connection.end();
     
   })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'LIQUID CS' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_liquid (lc_id, lc_group, lc_brand, lc_model, lc_price_srp, lc_discount, lc_stock_nny, lc_stock_ramintra, lc_stock_bangphlat, lc_stock_thefloat, lc_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE lc_id = ?, lc_group = ?, lc_price_srp = ?, lc_discount = ?, lc_stock_nny = ?, lc_stock_ramintra = ?, lc_stock_bangphlat = ?, lc_stock_thefloat = ?, lc_stock_sum = ?`,
+      [row[0], row[7], row[8], row[1], row[11], row[12], row[2], row[3], row[4], row[5], row[6], 
+      row[0], row[7], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
   res.status(200).send({ status: 'done' });
 })
 
@@ -315,6 +335,85 @@ app.delete("/admin_del_nb/:id", (req, res) => {
 app.put('/update_stock_nb' , (req, res) => {
   connection.query(
     "UPDATE pd_nb SET nb_status = 'N' WHERE nb_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- LIQUID COOLING ----------------
+
+app.get('/lc' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_liquid WHERE lc_status="Y" ORDER BY lc_group ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_lc' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_liquid ORDER BY lc_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_lc/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_liquid SET lc_group = ?, lc_brand = ?, lc_model = ?, lc_color = ?, 
+     lc_status = ?, lc_href = ?, lc_price_srp = ?, lc_discount = ? WHERE lc_id = ?`,
+    [group, brand, model, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_lc/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_liquid SET lc_status = ? WHERE lc_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.put('/update_img_lc/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_lc SET lc_img = ? WHERE lc_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.delete("/admin_del_lc/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_liquid WHERE lc_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_lc' , (req, res) => {
+  connection.query(
+    "UPDATE pd_liquid SET lc_status = 'N' WHERE lc_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
