@@ -347,7 +347,7 @@ app.put('/update_stock_nb' , (req, res) => {
 
 app.get('/lc' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_liquid WHERE lc_status="Y" ORDER BY lc_group, lc_brand ASC`,
+    `SELECT * FROM pd_liquid WHERE lc_status="Y" ORDER BY lc_group, lc_price_srp ASC`,
     function(err, results, fields) {
       res.send(results)
     }
