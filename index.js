@@ -264,6 +264,17 @@ app.put('/update_img_case/:id' , (req, res) => {
   )
 })
 
+app.put('/update_stock_case' , (req, res) => {
+  connection.query(
+    "UPDATE pd_case SET case_status = 'N' WHERE case_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
 
 //----------------- NOTEBOOK ----------------
 
