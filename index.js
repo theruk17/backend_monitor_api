@@ -136,9 +136,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_case (case_id, case_model, case_price_srp) VALUES (?, ?, ?) 
-      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?`,
-      [row[0], row[1], row[5], row[0], row[5]],
+      connection.query(`INSERT INTO pd_case (case_id, case_model, case_price_srp, case_stock_nny, case_stock_ramintra, case_stock_bangphlat, case_stock_thefloat, case_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?, case_stock_nny = ?, case_stock_ramintra = ?, case_stock_bangphlat = ?, case_stock_thefloat = ?, case_stock_sum = ?`,
+      [row[0], row[1], row[4], row[6], row[7], row[8], row[9], row[10],
+       row[0], row[4], row[6], row[7], row[8], row[9], row[10]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
