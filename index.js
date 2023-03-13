@@ -116,8 +116,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com, nmt_stock_nny, nmt_stock_ramintra, nmt_stock_bangphlat, nmt_stock_thefloat, mnt_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?, nmt_stock_nny = ?, nmt_stock_ramintra = ?, nmt_stock_bangphlat = ?, nmt_stock_thefloat = ?, mnt_stock_sum = ?`,
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com, mnt_stock_nny, mnt_stock_ramintra, mnt_stock_bangphlat, mnt_stock_thefloat, mnt_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?, mnt_stock_nny = ?, mnt_stock_ramintra = ?, mnt_stock_bangphlat = ?, mnt_stock_thefloat = ?, mnt_stock_sum = ?`,
       [row[0], row[16], row[1], row[13], row[14], row[15], row[9], row[10], row[2], row[3], row[4], row[5], row[6],
         row[0], row[14], row[15], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
       function (err, result) {
