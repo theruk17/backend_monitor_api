@@ -39,7 +39,7 @@ app.get('/admin_data' , (req, res) => {
 
 app.put('/update_stock_mnt' , (req, res) => {
   connection.query(
-    "UPDATE pd_monitor SET mnt_status = 'N' WHERE mnt_stock = 0",
+    "UPDATE pd_monitor SET mnt_status = 'N' WHERE mnt_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
