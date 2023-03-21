@@ -195,9 +195,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_fan (f_id, f_brand, f_model, f_price_srp, f_discount, f_stock_nny, f_stock_ramintra, f_stock_bangphlat, f_stock_thefloat, f_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      connection.query(`INSERT INTO pd_fan (f_id, f_brand, f_model, f_color, f_price_srp, f_discount, f_stock_nny, f_stock_ramintra, f_stock_bangphlat, f_stock_thefloat, f_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
       ON DUPLICATE KEY UPDATE f_id = ?, f_price_srp = ?, f_discount = ?, f_stock_nny = ?, f_stock_ramintra = ?, f_stock_bangphlat = ?, f_stock_thefloat = ?, f_stock_sum = ?`,
-      [row[0], row[12], row[1], row[9], row[10], row[2], row[3], row[4], row[5], row[6],  
+      [row[0], row[12], row[1], row[13], row[9], row[10], row[2], row[3], row[4], row[5], row[6],  
       row[0], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
       function (err, result, fields) {
         if (err) throw err;
