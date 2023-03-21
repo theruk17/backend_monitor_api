@@ -187,6 +187,27 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     //connection.end();
     
   })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'FAN' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_fan (f_id, f_brand, f_model, f_price_srp, f_discount, f_stock_nny, f_stock_ramintra, f_stock_bangphlat, f_stock_thefloat, f_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE f_id = ?, f_price_srp = ?, f_discount = ?, f_stock_nny = ?, f_stock_ramintra = ?, f_stock_bangphlat = ?, f_stock_thefloat = ?, f_stock_sum = ?`,
+      [row[0], row[12], row[2], row[9], row[10], row[2], row[3], row[4], row[5], row[6],  
+      row[0], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+
   res.status(200).send({ status: 'done' });
 })
 
@@ -426,6 +447,85 @@ app.delete("/admin_del_lc/:id", (req, res) => {
 app.put('/update_stock_lc' , (req, res) => {
   connection.query(
     "UPDATE pd_liquid SET lc_status = 'N' WHERE lc_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- FAN ----------------
+
+app.get('/fan' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_fan WHERE f_status="Y" ORDER BY f_group, f_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_fan' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_fan ORDER BY f_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_fan/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_fan SET f_group = ?, f_brand = ?, f_model = ?, f_color = ?, 
+     f_status = ?, f_href = ?, f_price_srp = ?, f_discount = ? WHERE f_id = ?`,
+    [group, brand, model, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_fan/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_fan SET f_status = ? WHERE f_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.put('/update_img_fan/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_fan SET f_img = ? WHERE f_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.delete("/admin_del_fan/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_fan WHERE f_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_fan' , (req, res) => {
+  connection.query(
+    "UPDATE pd_fan SET f_status = 'N' WHERE f_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
