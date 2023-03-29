@@ -10,6 +10,15 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+const upload = multer({ storage });
 
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 
@@ -556,15 +565,7 @@ app.put('/update_stock_fan' , (req, res) => {
 
 //----------------- HEADSET ----------------
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-  },
-});
-const upload = multer({ storage });
+
 
 app.put('/upload_img_hs/:id' ,upload.single('file'), (req, res) => {
   const { id }  = req.params
