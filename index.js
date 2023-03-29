@@ -10,14 +10,14 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const storage = multer.diskStorage({
+/* const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/uploads');
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   },
-});
+}); */
 const upload = multer();
 
 const connection = mysql.createConnection(process.env.DATABASE_URL)
