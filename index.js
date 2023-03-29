@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   },
 });
-const upload = multer({ storage });
+const upload = multer();
 
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 
