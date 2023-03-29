@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const multer = require('multer')
+const path = require('path');
 const readXlsxFile = require('read-excel-file/node')
 const mysql = require('mysql2')
 require('dotenv').config()
@@ -9,7 +10,6 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const upload = multer()
 
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 
@@ -199,6 +199,26 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       ON DUPLICATE KEY UPDATE f_id = ?, f_price_srp = ?, f_discount = ?, f_stock_nny = ?, f_stock_ramintra = ?, f_stock_bangphlat = ?, f_stock_thefloat = ?, f_stock_sum = ?`,
       [row[0], row[12], row[1], row[13], row[9], row[10], row[2], row[3], row[4], row[5], row[6],  
       row[0], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'HEADSET' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_headset (hs_id, hs_brand, hs_group, hs_model, hs_price_srp, hs_discount, hs_stock_nny, hs_stock_ramintra, hs_stock_bangphlat, hs_stock_thefloat, hs_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE hs_id = ?, hs_price_srp = ?, hs_discount = ?, hs_stock_nny = ?, hs_stock_ramintra = ?, hs_stock_bangphlat = ?, hs_stock_thefloat = ?, hs_stock_sum = ?`,
+      [row[0], row[12], row[7], row[1], row[10], row[11], row[2], row[3], row[4], row[5], row[6],  
+      row[0], row[10], row[11], row[2], row[3], row[4], row[5], row[6]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -526,6 +546,97 @@ app.delete("/admin_del_fan/:id", (req, res) => {
 app.put('/update_stock_fan' , (req, res) => {
   connection.query(
     "UPDATE pd_fan SET f_status = 'N' WHERE f_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- HEADSET ----------------
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+const upload = multer({ storage });
+
+app.put('/upload_img_hs/:id' ,upload.single('file'), (req, res) => {
+  const { id }  = req.params
+  const { filename  } = req.file;
+  const imageUrl = `/uploads/${filename}`;
+  
+  connection.query(
+    `UPDATE pd_headset SET hs_img = ? WHERE hs_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/hs' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_headset WHERE hs_status="Y" ORDER BY hs_group, hs_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_hs' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_headset ORDER BY hs_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_hs/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_headset SET hs_group = ?, hs_brand = ?, hs_model = ?, hs_color = ?, 
+     hs_status = ?, hs_href = ?, hs_price_srp = ?, hs_discount = ? WHERE hs_id = ?`,
+    [group, brand, model, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_hs/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_headset SET hs_status = ? WHERE hs_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_hs/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_headset WHERE hs_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_hs' , (req, res) => {
+  connection.query(
+    "UPDATE pd_headset SET hs_status = 'N' WHERE hs_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
