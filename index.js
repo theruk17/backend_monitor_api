@@ -567,11 +567,9 @@ app.put('/update_stock_fan' , (req, res) => {
 
 
 
-app.put('/upload_img_hs/:id' ,upload.single('file'), (req, res) => {
+app.put('/update_img_hs/:id' , (req, res) => {
   const { id }  = req.params
-  const { filename  } = req.file;
-  const imageUrl = `/uploads/${filename}`;
-  
+  const { imageUrl } = req.body;
   connection.query(
     `UPDATE pd_headset SET hs_img = ? WHERE hs_id = ?`,
     [imageUrl, id], (err, result) => {
