@@ -675,7 +675,7 @@ app.get('/kb' , (req, res) => {
 
 app.get('/admin_data_kb' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_kb ORDER BY kb_brand ASC`,
+    `SELECT * FROM pd_kb ORDER BY kb_brand, kb_model ASC`,
     function(err, results, fields) {
       res.send(results)
     }
