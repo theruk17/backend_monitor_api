@@ -104,7 +104,7 @@ app.delete("/admin_del/:id", (req, res) => {
 });
 
 app.post('/upload', upload.single('file'), async (req, res) => {
-  await readXlsxFile(req.file.buffer, { sheet: 'UPDATE MNT DATA' }).then((rows) => {
+  /* await readXlsxFile(req.file.buffer, { sheet: 'UPDATE MNT DATA' }).then((rows) => {
     //connection.connect();
     
     rows = rows.slice(1);
@@ -222,7 +222,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     });
     //connection.end();
     
-  })
+  }) */
 
   await readXlsxFile(req.file.buffer, { sheet: 'KB' }).then((rows) => {
     //connection.connect();
@@ -241,10 +241,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       })
     });
     //connection.end();
-    res.status(200).send({ status: 'done' });
+    
   })
 
-  
+  res.status(200).send({ status: 'done' });
 })
 
 
