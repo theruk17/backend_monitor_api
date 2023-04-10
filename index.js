@@ -57,19 +57,6 @@ app.put('/update_stock_mnt' , (req, res) => {
   )
 })
 
-/* app.post('/create_mnt' , (req, res) => {
-  const { id, group, brand, model, size, hz, panel, resolution, curve, status, price_srp, price_w_com } = req.body
-  connection.query(
-    `INSERT INTO pd_monitor (mnt_id, mnt_group, mnt_brand, mnt_model, mnt_size, mnt_refresh_rate, mnt_panel, mnt_resolution, mnt_curve, mnt_status, mnt_price_srp, mnt_price_w_com) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`,
-    [id, group, brand, model, size, hz, panel, resolution, curve, status, price_srp, price_w_com], (err, result) => {
-      if(err) throw err
-      res.send("Data updated successsfully")
-    }
-    
-  )
-}) */
-
 app.get('/edit_data/:id' , (req, res) => {
   const { id }  = req.params
   connection.query(
@@ -135,7 +122,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       });
     
     });
-    res.status(200).send({ status: 'done_mnt' });
     //connection.end();
   })
 
