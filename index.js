@@ -241,10 +241,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       })
     });
     //connection.end();
-    
+    res.status(200).send({ status: 'done' });
   })
 
-  res.status(200).send({ status: 'done' });
+  
 })
 
 
