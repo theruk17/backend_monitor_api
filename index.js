@@ -118,7 +118,7 @@ app.delete("/admin_del/:id", (req, res) => {
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   await readXlsxFile(req.file.buffer, { sheet: 'UPDATE MNT DATA' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     
     rows = rows.slice(1);
     rows.forEach(row => {
@@ -135,11 +135,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       });
     
     });
-    //connection.end();
+    connection.end();
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'CASE' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(1);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -154,11 +154,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'NOTEBOOK' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(3);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -173,12 +173,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
     
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'LIQUID CS' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(3);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -193,12 +193,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
     
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'FAN' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(3);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -213,12 +213,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
     
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'HEADSET' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(3);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -233,12 +233,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
     
   })
 
   await readXlsxFile(req.file.buffer, { sheet: 'KB' }).then((rows) => {
-    //connection.connect();
+    connection.connect();
     rows = rows.slice(3);
     rows.forEach((row) => {
       if (!row[0]) {
@@ -253,7 +253,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         console.log(`Inserted ${result.affectedRows} row(s)`)
       })
     });
-    //connection.end();
+    connection.end();
     
   })
 
