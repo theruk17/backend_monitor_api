@@ -237,6 +237,26 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     
   })
 
+  await readXlsxFile(req.file.buffer, { sheet: 'KB' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_kb (kb_id, kb_brand, kb_model, kb_price_srp, kb_discount, kb_stock_nny, kb_stock_ramintra, kb_stock_bangphlat, kb_stock_thefloat, kb_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE kb_id = ?, kb_price_srp = ?, kb_discount = ?, kb_stock_nny = ?, kb_stock_ramintra = ?, kb_stock_bangphlat = ?, kb_stock_thefloat = ?, kb_stock_sum = ?`,
+      [row[0], row[12], row[1], row[10], row[11], row[2], row[3], row[4], row[5], row[6],  
+      row[0], row[10], row[11], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+
   res.status(200).send({ status: 'done' });
 })
 
@@ -565,8 +585,6 @@ app.put('/update_stock_fan' , (req, res) => {
 
 //----------------- HEADSET ----------------
 
-
-
 app.put('/update_img_hs/:id' , (req, res) => {
   const { id }  = req.params
   const { imageUrl } = req.body;
@@ -636,6 +654,85 @@ app.delete("/admin_del_hs/:id", (req, res) => {
 app.put('/update_stock_hs' , (req, res) => {
   connection.query(
     "UPDATE pd_headset SET hs_status = 'N' WHERE hs_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- KEYBOARD ----------------
+
+app.put('/update_img_kb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_kb SET kb_img = ? WHERE kb_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/kb' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_kb WHERE kb_status="Y" ORDER BY kb_group, kb_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_kb' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_kb ORDER BY kb_brand ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_kb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, sw, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_kb SET kb_group = ?, kb_brand = ?, kb_model = ?, kb_switch = ?, kb_color = ?, 
+     kb_status = ?, kb_href = ?, kb_price_srp = ?, kb_discount = ? WHERE kb_id = ?`,
+    [group, brand, model, sw, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_kb/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_kb SET kb_status = ? WHERE kb_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_kb/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_kb WHERE kb_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_kb' , (req, res) => {
+  connection.query(
+    "UPDATE pd_kb SET kb_status = 'N' WHERE kb_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
