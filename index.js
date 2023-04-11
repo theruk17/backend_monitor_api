@@ -684,11 +684,11 @@ app.get('/admin_data_kb' , (req, res) => {
 
 app.put('/edit_kb/:id' , (req, res) => {
   const { id }  = req.params
-  const { group, brand, model, sw, color, status, href, price_srp, discount } = req.body
+  const { group, brand, model, sw, color, connect, status, href, price_srp, discount } = req.body
   connection.query(
-    `UPDATE pd_kb SET kb_group = ?, kb_brand = ?, kb_model = ?, kb_switch = ?, kb_color = ?, 
+    `UPDATE pd_kb SET kb_group = ?, kb_brand = ?, kb_model = ?, kb_switch = ?, kb_color = ?, kb_connect = ?, 
      kb_status = ?, kb_href = ?, kb_price_srp = ?, kb_discount = ? WHERE kb_id = ?`,
-    [group, brand, model, sw, color, status, href, price_srp, discount, id], (err, result) => {
+    [group, brand, model, sw, color, connect, status, href, price_srp, discount, id], (err, result) => {
       if(err) throw err
       res.send("Data updated successsfully")
     }
