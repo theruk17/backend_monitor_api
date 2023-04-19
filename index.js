@@ -264,6 +264,46 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     
   })
 
+  await readXlsxFile(req.file.buffer, { sheet: 'MOUSE' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_mouse (m_id, m_brand, m_model, m_type, m_price_srp, m_discount, m_stock_nny, m_stock_ramintra, m_stock_bangphlat, m_stock_thefloat, m_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE m_id = ?, m_price_srp = ?, m_discount = ?, m_stock_nny = ?, m_stock_ramintra = ?, m_stock_bangphlat = ?, m_stock_thefloat = ?, m_stock_sum = ?`,
+      [row[0], row[13], row[1], row[7], row[11], row[12], row[2], row[3], row[4], row[5], row[6],  
+      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+
+  await readXlsxFile(req.file.buffer, { sheet: 'M-PAD' }).then((rows) => {
+    //connection.connect();
+    rows = rows.slice(3);
+    rows.forEach((row) => {
+      if (!row[0]) {
+        return;
+      }
+      connection.query(`INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_dimentions, mp_price_srp, mp_discount, mp_stock_nny, mp_stock_ramintra, mp_stock_bangphlat, mp_stock_thefloat, mp_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mp_id = ?, mp_price_srp = ?, mp_discount = ?, mp_stock_nny = ?, mp_stock_ramintra = ?, mp_stock_bangphlat = ?, mp_stock_thefloat = ?, mp_stock_sum = ?`,
+      [row[0], row[13], row[1], row[8], row[11], row[12], row[2], row[3], row[4], row[5], row[6],  
+      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      function (err, result, fields) {
+        if (err) throw err;
+        console.log(`Inserted ${result.affectedRows} row(s)`)
+      })
+    });
+    //connection.end();
+    
+  })
+
 
   res.status(200).send({ status: 'done' });
 })
@@ -820,6 +860,85 @@ app.delete("/admin_del_ch/:id", (req, res) => {
 app.put('/update_stock_ch' , (req, res) => {
   connection.query(
     "UPDATE pd_chair SET ch_status = 'N' WHERE ch_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- MOUSE ----------------
+
+app.put('/update_img_m/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_mouse SET m_img = ? WHERE m_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/m' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mouse WHERE m_status="Y" ORDER BY m_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_m' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mouse ORDER BY m_brand, m_model ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_m/:id' , (req, res) => {
+  const { id }  = req.params
+  const { brand, model, color, type, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_mouse SET m_brand = ?, m_model = ?, m_color = ?, m_type = ?, 
+     m_status = ?, m_href = ?, m_price_srp = ?, m_discount = ? WHERE m_id = ?`,
+    [brand, model, color, type, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_m/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_mouse SET m_status = ? WHERE m_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_m/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_mouse WHERE m_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_m' , (req, res) => {
+  connection.query(
+    "UPDATE pd_mouse SET m_status = 'N' WHERE m_stock_sum = 0",
     (err, result) => {
       if(err) throw err
       res.send("Stock updated.")
