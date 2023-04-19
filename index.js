@@ -947,4 +947,84 @@ app.put('/update_stock_m' , (req, res) => {
   )
 })
 
+//----------------- MOUSE PAD ----------------
+
+app.put('/update_img_mp/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_mousepad SET mp_img = ? WHERE mp_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/mp' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mousepad WHERE mp_status="Y" ORDER BY mp_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_mp' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mousepad ORDER BY mp_brand, mp_model ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_mp/:id' , (req, res) => {
+  const { id }  = req.params
+  const { group, brand, model, color, dimentions, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_mousepad SET mp_group = ?, mp_brand = ?, mp_model = ?, mp_color = ?, mp_dimentions = ?, 
+     mp_status = ?, mp_href = ?, mp_price_srp = ?, mp_discount = ? WHERE mp_id = ?`,
+    [group, brand, model, color, dimentions, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_mp/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_mousepad SET mp_status = ? WHERE mp_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_mp/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_mousepad WHERE mp_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_mp' , (req, res) => {
+  connection.query(
+    "UPDATE pd_mousepad SET mp_status = 'N' WHERE mp_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+
 app.listen(process.env.PORT || 3000)
