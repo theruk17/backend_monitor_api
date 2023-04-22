@@ -382,6 +382,14 @@ app.put('/update_img_case/:id' , (req, res) => {
   )
 })
 
+app.delete("/admin_del_case/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_case WHERE case_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
 app.put('/update_stock_case' , (req, res) => {
   connection.query(
     "UPDATE pd_case SET case_status = 'N' WHERE case_stock_sum = 0",
