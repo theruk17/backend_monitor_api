@@ -112,10 +112,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com, mnt_stock_nny, mnt_stock_ramintra, mnt_stock_bangphlat, mnt_stock_thefloat, mnt_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?, mnt_stock_nny = ?, mnt_stock_ramintra = ?, mnt_stock_bangphlat = ?, mnt_stock_thefloat = ?, mnt_stock_sum = ?`,
-      [row[0], row[16], row[1], row[13], row[14], row[15], row[9], row[10], row[2], row[3], row[4], row[5], row[6],
-        row[0], row[14], row[15], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_refresh_rate, mnt_price_srp, mnt_price_w_com, mnt_stock_nny, mnt_stock_ramintra, mnt_stock_bangphlat, mnt_stock_thefloat, mnt_stock_rangsit, mnt_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_size = ?, mnt_refresh_rate = ?, mnt_price_srp = ?, mnt_price_w_com = ?, mnt_stock_nny = ?, mnt_stock_ramintra = ?, mnt_stock_bangphlat = ?, mnt_stock_thefloat = ?, mnt_stock_rangsit = ?, mnt_stock_sum = ?`,
+      [row[0], row[17], row[1], row[14], row[15], row[16], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7],
+        row[0], row[15], row[16], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`);
@@ -132,10 +132,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_case (case_id, case_model, case_price_srp, case_stock_nny, case_stock_ramintra, case_stock_bangphlat, case_stock_thefloat, case_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?, case_stock_nny = ?, case_stock_ramintra = ?, case_stock_bangphlat = ?, case_stock_thefloat = ?, case_stock_sum = ?`,
-      [row[0], row[1], row[4], row[6], row[7], row[8], row[9], row[10],
-       row[0], row[4], row[6], row[7], row[8], row[9], row[10]],
+      connection.query(`INSERT INTO pd_case (case_id, case_brand, case_model, case_price_srp, case_stock_nny, case_stock_ramintra, case_stock_bangphlat, case_stock_thefloat, case_stock_rangsit, case_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE case_id = ?, case_price_srp = ?, case_stock_nny = ?, case_stock_ramintra = ?, case_stock_bangphlat = ?, case_stock_thefloat = ?, case_stock_rangsit = ?, case_stock_sum = ?`,
+      [row[0], row[12], row[1], row[4], row[6], row[7], row[8], row[9], row[10], row[11],
+       row[0], row[4], row[6], row[7], row[8], row[9], row[10], row[11]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -151,10 +151,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp, nb_dis_price, nb_stock_nny, nb_stock_ramintra, nb_stock_bangphlat, nb_stock_thefloat, nb_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_dis_price = ?, nb_stock_nny = ?, nb_stock_ramintra = ?, nb_stock_bangphlat = ?, nb_stock_thefloat = ?, nb_stock_sum = ?`,
-      [row[0], row[13], row[1], row[14], row[15], row[17], row[18], row[19], row[20], row[21], row[9], row[10], row[2], row[3], row[4], row[5], row[6],
-      row[0], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[21], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_nb (nb_id, nb_group, nb_brand, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os, nb_price_srp, nb_dis_price, nb_stock_nny, nb_stock_ramintra, nb_stock_bangphlat, nb_stock_thefloat, nb_stock_rangsit, nb_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?, nb_price_srp = ?, nb_dis_price = ?, nb_stock_nny = ?, nb_stock_ramintra = ?, nb_stock_bangphlat = ?, nb_stock_thefloat = ?, nb_stock_rangsit = ?, nb_stock_sum = ?`,
+      [row[0], row[14], row[23], row[1], row[15], row[16], row[18], row[19], row[20], row[21], row[22], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7],
+      row[0], row[13], row[14], row[15], row[17], row[18], row[19], row[20], row[21], row[9], row[10], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -171,10 +171,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_liquid (lc_id, lc_group, lc_brand, lc_model, lc_price_srp, lc_discount, lc_stock_nny, lc_stock_ramintra, lc_stock_bangphlat, lc_stock_thefloat, lc_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE lc_id = ?, lc_group = ?, lc_price_srp = ?, lc_discount = ?, lc_stock_nny = ?, lc_stock_ramintra = ?, lc_stock_bangphlat = ?, lc_stock_thefloat = ?, lc_stock_sum = ?`,
-      [row[0], row[7], row[8], row[1], row[11], row[12], row[2], row[3], row[4], row[5], row[6], 
-      row[0], row[7], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_liquid (lc_id, lc_group, lc_brand, lc_model, lc_price_srp, lc_discount, lc_stock_nny, lc_stock_ramintra, lc_stock_bangphlat, lc_stock_thefloat, lc_stock_rangsit, lc_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE lc_id = ?, lc_group = ?, lc_price_srp = ?, lc_discount = ?, lc_stock_nny = ?, lc_stock_ramintra = ?, lc_stock_bangphlat = ?, lc_stock_thefloat = ?, lc_stock_rangsit = ?, lc_stock_sum = ?`,
+      [row[0], row[8], row[9], row[1], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7], 
+      row[0], row[8], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -191,10 +191,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_fan (f_id, f_brand, f_model, f_color, f_price_srp, f_discount, f_stock_nny, f_stock_ramintra, f_stock_bangphlat, f_stock_thefloat, f_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE f_id = ?, f_price_srp = ?, f_discount = ?, f_stock_nny = ?, f_stock_ramintra = ?, f_stock_bangphlat = ?, f_stock_thefloat = ?, f_stock_sum = ?`,
-      [row[0], row[12], row[1], row[13], row[9], row[10], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[9], row[10], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_fan (f_id, f_group, f_brand, f_model, f_color, f_price_srp, f_discount, f_stock_nny, f_stock_ramintra, f_stock_bangphlat, f_stock_thefloat, f_stock_rangsit, f_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE f_id = ?, f_group = ?, f_price_srp = ?, f_discount = ?, f_stock_nny = ?, f_stock_ramintra = ?, f_stock_bangphlat = ?, f_stock_thefloat = ?, f_stock_rangsit = ?, f_stock_sum = ?`,
+      [row[0], row[12], row[13], row[1], row[14], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[12], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -211,10 +211,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_headset (hs_id, hs_brand, hs_group, hs_model, hs_price_srp, hs_discount, hs_stock_nny, hs_stock_ramintra, hs_stock_bangphlat, hs_stock_thefloat, hs_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE hs_id = ?, hs_price_srp = ?, hs_discount = ?, hs_stock_nny = ?, hs_stock_ramintra = ?, hs_stock_bangphlat = ?, hs_stock_thefloat = ?, hs_stock_sum = ?`,
-      [row[0], row[12], row[7], row[1], row[10], row[11], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[10], row[11], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_headset (hs_id, hs_brand, hs_group, hs_model, hs_price_srp, hs_discount, hs_stock_nny, hs_stock_ramintra, hs_stock_bangphlat, hs_stock_thefloat, hs_stock_rangsit, hs_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE hs_id = ?, hs_price_srp = ?, hs_discount = ?, hs_stock_nny = ?, hs_stock_ramintra = ?, hs_stock_bangphlat = ?, hs_stock_thefloat = ?, hs_stock_rangsit = ?, hs_stock_sum = ?`,
+      [row[0], row[13], row[8], row[1], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -233,8 +233,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       }
       connection.query(`INSERT INTO pd_kb (kb_id, kb_connect, kb_group, kb_brand, kb_model, kb_price_srp, kb_discount, kb_stock_nny, kb_stock_ramintra, kb_stock_bangphlat, kb_stock_thefloat, kb_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
       ON DUPLICATE KEY UPDATE kb_id = ?, kb_price_srp = ?, kb_discount = ?, kb_stock_nny = ?, kb_stock_ramintra = ?, kb_stock_bangphlat = ?, kb_stock_thefloat = ?, kb_stock_sum = ?`,
-      [row[0], row[7], row[8], row[13], row[1], row[11], row[12], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      [row[0], row[8], row[9], row[14], row[1], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -251,10 +251,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_chair (ch_id, ch_brand, ch_model, ch_price_srp, ch_discount, ch_stock_nny, ch_stock_ramintra, ch_stock_bangphlat, ch_stock_thefloat, ch_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE ch_id = ?, ch_price_srp = ?, ch_discount = ?, ch_stock_nny = ?, ch_stock_ramintra = ?, ch_stock_bangphlat = ?, ch_stock_thefloat = ?, ch_stock_sum = ?`,
-      [row[0], row[12], row[1], row[10], row[11], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[10], row[11], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_chair (ch_id, ch_brand, ch_model, ch_price_srp, ch_discount, ch_stock_nny, ch_stock_ramintra, ch_stock_bangphlat, ch_stock_thefloat, ch_stock_rangsit, ch_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE ch_id = ?, ch_price_srp = ?, ch_discount = ?, ch_stock_nny = ?, ch_stock_ramintra = ?, ch_stock_bangphlat = ?, ch_stock_thefloat = ?, ch_stock_rangsit = ?, ch_stock_sum = ?`,
+      [row[0], row[13], row[1], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -271,10 +271,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_mouse (m_id, m_brand, m_model, m_type, m_price_srp, m_discount, m_stock_nny, m_stock_ramintra, m_stock_bangphlat, m_stock_thefloat, m_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE m_id = ?, m_price_srp = ?, m_discount = ?, m_stock_nny = ?, m_stock_ramintra = ?, m_stock_bangphlat = ?, m_stock_thefloat = ?, m_stock_sum = ?`,
-      [row[0], row[13], row[1], row[7], row[11], row[12], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_mouse (m_id, m_brand, m_model, m_type, m_price_srp, m_discount, m_stock_nny, m_stock_ramintra, m_stock_bangphlat, m_stock_thefloat, m_stock_rangsit, m_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE m_id = ?, m_price_srp = ?, m_discount = ?, m_stock_nny = ?, m_stock_ramintra = ?, m_stock_bangphlat = ?, m_stock_thefloat = ?, m_stock_rangsit = ?, m_stock_sum = ?`,
+      [row[0], row[14], row[1], row[8], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
@@ -291,10 +291,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       if (!row[0]) {
         return;
       }
-      connection.query(`INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_dimentions, mp_price_srp, mp_discount, mp_stock_nny, mp_stock_ramintra, mp_stock_bangphlat, mp_stock_thefloat, mp_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE mp_id = ?, mp_price_srp = ?, mp_discount = ?, mp_stock_nny = ?, mp_stock_ramintra = ?, mp_stock_bangphlat = ?, mp_stock_thefloat = ?, mp_stock_sum = ?`,
-      [row[0], row[13], row[1], row[8], row[11], row[12], row[2], row[3], row[4], row[5], row[6],  
-      row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6]],
+      connection.query(`INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_dimentions, mp_price_srp, mp_discount, mp_stock_nny, mp_stock_ramintra, mp_stock_bangphlat, mp_stock_thefloat, mp_stock_rangsit, mp_stock_sum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+      ON DUPLICATE KEY UPDATE mp_id = ?, mp_price_srp = ?, mp_discount = ?, mp_stock_nny = ?, mp_stock_ramintra = ?, mp_stock_bangphlat = ?, mp_stock_thefloat = ?, mp_stock_rangsit = ?, mp_stock_sum = ?`,
+      [row[0], row[14], row[1], row[9], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7],  
+      row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
         console.log(`Inserted ${result.affectedRows} row(s)`)
