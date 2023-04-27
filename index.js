@@ -104,6 +104,7 @@ app.delete("/admin_del/:id", (req, res) => {
 });
 
 app.post('/upload', upload.single('file'), async (req, res) => {
+  res.status(200).send({ status: 'done' });
   await readXlsxFile(req.file.buffer, { sheet: 'UPDATE MNT DATA' }).then((rows) => {
     //connection.connect();
     
@@ -305,7 +306,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   })
 
 
-  res.status(200).send({ status: 'done' });
+  
 })
 
 
