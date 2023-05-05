@@ -118,7 +118,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         row[0], row[15], row[16], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`);
+        console.log(`Monitor ${result.affectedRows} row(s)`);
       });
     
     });
@@ -138,7 +138,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
        row[0], row[4], row[6], row[7], row[8], row[9], row[10], row[11]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Case ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -157,7 +157,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[14], row[15], row[16], row[18], row[19], row[20], row[21], row[22], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Notebook ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -177,7 +177,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[8], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Liquid ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -197,7 +197,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[12], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Fan ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -217,7 +217,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Headset ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -237,7 +237,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Keyboard ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -257,7 +257,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[11], row[12], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Chair ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -277,7 +277,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Mouse ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
@@ -297,7 +297,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Inserted ${result.affectedRows} row(s)`)
+        console.log(`Mousepad ${result.length} row(s)`)
       })
     });
     //connection.end();
