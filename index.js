@@ -305,7 +305,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   })
 
 
-  res.status(200).send({ status: 'done' });
+  return res.status(200).send({ status: 'done' });
 })
 
 
