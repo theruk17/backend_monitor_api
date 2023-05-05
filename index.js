@@ -297,7 +297,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       row[0], row[12], row[13], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result, fields) {
         if (err) throw err;
-        console.log(`Mousepad ${result.length} row(s)`)
+        console.log(`Mousepad ${result.affectedRows} row(s)`)
       })
     });
     //connection.end();
