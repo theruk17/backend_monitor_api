@@ -1034,6 +1034,4 @@ app.put('/update_stock_mp' , (req, res) => {
   )
 })
 
-let port = process.env.PORT || 3000;
-
-app.listen(port)
+app.listen(process.env.PORT || 3000)
