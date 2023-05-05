@@ -118,7 +118,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         row[0], row[15], row[16], row[10], row[11], row[2], row[3], row[4], row[5], row[6], row[7]],
       function (err, result) {
         if (err) throw err;
-        console.log(`Monitor ${result.affectedRows} row(s)`);
+        //console.log(`Monitor ${result.affectedRows} row(s)`);
       });
     
     });
