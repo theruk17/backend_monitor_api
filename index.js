@@ -735,7 +735,7 @@ app.put('/update_img_kb/:id' , (req, res) => {
 
 app.get('/kb' , (req, res) => {
   connection.query(
-    `SELECT * FROM pd_kb WHERE kb_status="Y" ORDER BY CASE kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 END, kb_discount ASC`,
+    `SELECT * FROM pd_kb WHERE kb_status="Y" ORDER BY CASE kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 WHEN "BAREBONE/100%" THEN 9 WHEN "BAREBONE/98%" THEN 10 WHEN "BAREBONE/75%" THEN 11 END, kb_discount ASC`,
     function(err, results, fields) {
       res.send(results)
     }
