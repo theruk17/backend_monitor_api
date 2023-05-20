@@ -1034,4 +1034,162 @@ app.put('/update_stock_mp' , (req, res) => {
   )
 })
 
+//----------------- MICE ----------------
+
+app.put('/update_img_mic/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_mic SET mic_img = ? WHERE mic_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/mic' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mic WHERE mic_status="Y" ORDER BY mic_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_mic' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_mic ORDER BY mic_brand, mic_model ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_mic/:id' , (req, res) => {
+  const { id }  = req.params
+  const { brand, model, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_mic SET mic_brand = ?, mic_model = ?, mic_color = ?, 
+     mic_status = ?, mic_href = ?, mic_price_srp = ?, mic_discount = ? WHERE mic_id = ?`,
+    [brand, model, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_mic/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_mic SET mic_status = ? WHERE mic_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_mic/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_mic WHERE mic_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_mic' , (req, res) => {
+  connection.query(
+    "UPDATE pd_mic SET mic_status = 'N' WHERE mic_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
+//----------------- SINK ----------------
+
+app.put('/update_img_s/:id' , (req, res) => {
+  const { id }  = req.params
+  const { imageUrl } = req.body;
+  connection.query(
+    `UPDATE pd_sink SET s_img = ? WHERE s_id = ?`,
+    [imageUrl, id], (err, result) => {
+      if(err) throw err
+      res.send("Image uploaded successfully!")
+    }
+    
+  )
+})
+
+app.get('/sink' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_sink WHERE s_status="Y" ORDER BY s_discount ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.get('/admin_data_s' , (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_sink ORDER BY s_brand, s_model ASC`,
+    function(err, results, fields) {
+      res.send(results)
+    }
+  )
+});
+
+app.put('/edit_s/:id' , (req, res) => {
+  const { id }  = req.params
+  const { brand, model, color, status, href, price_srp, discount } = req.body
+  connection.query(
+    `UPDATE pd_sink SET s_brand = ?, s_model = ?, s_color = ?, 
+     s_status = ?, s_href = ?, s_price_srp = ?, s_discount = ? WHERE s_id = ?`,
+    [brand, model, color, status, href, price_srp, discount, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+})
+
+app.put('/edit_status_s/:id' , (req, res) => {
+  const { id }  = req.params
+  const { status } = req.body
+  connection.query(
+    `UPDATE pd_sink SET s_status = ? WHERE s_id = ?`,
+    [status, id], (err, result) => {
+      if(err) throw err
+      res.send("Data updated successsfully")
+    }
+    
+  )
+});
+
+app.delete("/admin_del_s/:id", (req, res) => {
+  const id = req.params.id
+  connection.query("DELETE FROM pd_sink WHERE s_id = ?", id, (error, result) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+app.put('/update_stock_s' , (req, res) => {
+  connection.query(
+    "UPDATE pd_sink SET s_status = 'N' WHERE s_stock_sum = 0",
+    (err, result) => {
+      if(err) throw err
+      res.send("Stock updated.")
+    }
+    
+  )
+})
+
 app.listen(process.env.PORT || 3000)
