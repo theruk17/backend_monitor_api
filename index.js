@@ -8,12 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const connection = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -600,7 +595,7 @@ app.get("/monitor", (req, res) => {
   connection.query(
     `SELECT pd.mnt_brand AS mnt_brand, g.mnt_group AS mnt_group, pd.mnt_curve AS mnt_curve, pd.mnt_model AS mnt_model, pd.mnt_panel AS mnt_panel, pd.mnt_size AS mnt_size, pd.mnt_refresh_rate AS mnt_refresh_rate, pd.mnt_resolution AS mnt_resolution, pd.mnt_price_srp AS mnt_price_srp, pd.mnt_price_w_com AS mnt_price_w_com, pd.mnt_href AS mnt_href, pd.mnt_img AS mnt_img 
     FROM pd_monitor pd LEFT JOIN pd_group g ON g.mnt_group_id = pd.mnt_group 
-    WHERE pd.mnt_status="Y" ORDER BY pd.mnt_group, pd.mnt_price_w_com ASC`,
+    WHERE pd.mnt_status="Y" ORDER BY g.mnt_group, pd.mnt_price_w_com ASC`,
     function (err, results) {
       res.send(results);
     }
