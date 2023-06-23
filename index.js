@@ -595,7 +595,35 @@ app.get("/monitor", (req, res) => {
   connection.query(
     `SELECT pd.mnt_brand AS mnt_brand, g.mnt_group AS mnt_group, pd.mnt_curve AS mnt_curve, pd.mnt_model AS mnt_model, pd.mnt_panel AS mnt_panel, pd.mnt_size AS mnt_size, pd.mnt_refresh_rate AS mnt_refresh_rate, pd.mnt_resolution AS mnt_resolution, pd.mnt_price_srp AS mnt_price_srp, pd.mnt_price_w_com AS mnt_price_w_com, pd.mnt_href AS mnt_href, pd.mnt_img AS mnt_img 
     FROM pd_monitor pd LEFT JOIN pd_group g ON g.mnt_group_id = pd.mnt_group 
-    WHERE pd.mnt_status="Y" ORDER BY g.mnt_group, pd.mnt_price_w_com ASC`,
+    WHERE pd.mnt_status="Y" 
+		ORDER BY CASE g.mnt_group_id 
+		WHEN "001" THEN 1 
+		WHEN "002" THEN 2 
+		WHEN "003" THEN 3 
+		WHEN "004" THEN 4 
+		WHEN "005" THEN 5 
+		WHEN "006" THEN 6 
+		WHEN "008" THEN 7 
+		WHEN "009" THEN 8 
+		WHEN "010" THEN 9 
+		WHEN "016" THEN 10 
+		WHEN "011" THEN 11 
+		WHEN "012" THEN 12 
+		WHEN "013" THEN 13 
+		WHEN "017" THEN 14
+		WHEN "014" THEN 15 
+		WHEN "015" THEN 16 
+		END, 
+		pd.mnt_price_w_com ASC`,
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
+app.get("/monitor_group", (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_group ORDER BY mnt_group ASC`,
     function (err, results) {
       res.send(results);
     }
