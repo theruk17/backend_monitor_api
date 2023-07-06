@@ -440,7 +440,7 @@ app.get("/getdatasheet", async (req, res) => {
                   row[0],
                   row[15],
                   row[1],
-                  row[8],
+                  row[9],
                   row[13] == ""
                     ? 0
                     : row[13].replace(",", "").replace(".00", ""),
