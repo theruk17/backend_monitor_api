@@ -4,6 +4,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+const axios = require("axios");
 require("dotenv").config();
 
 const dir = path.join(__dirname, "uploads");
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(express.static(dir));
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
+const token = process.env.TOKEN;
+const url = process.env.URL;
 
 // Multer configuration for file upload
 const storage = multer.diskStorage({
@@ -53,6 +56,193 @@ app.post("/uploadimg", upload.single("file"), (req, res) => {
   );
 });
 
+// ################ get Stock Itech ##############
+app.post("/getStockItech", (req, res) => {
+  for (let i = 1; i <= 8; i++) {
+    let data = JSON.stringify({
+      BranchID: i,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: url,
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        if (i == 1) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `INSERT INTO productitech (productCode, productName, price, minPrice, stock_nny) VALUES (?, ?, ?, ?, ?) 
+            ON DUPLICATE KEY UPDATE productCode = ?, productName = ?, price = ?, minPrice = ?, stock_nny = ?`,
+              [
+                row.productCode,
+                row.productName,
+                row.price,
+                row.minPrice,
+                row.numberStock,
+
+                row.productCode,
+                row.productName,
+                row.price,
+                row.minPrice,
+                row.numberStock,
+              ],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 1 Successsfully.");
+        } else if (i == 2) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_ramintra = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 2 Successsfully.");
+        } else if (i == 3) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_claim = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 3 Successsfully.");
+        } else if (i == 4) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_bangphlat = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 4 Successsfully.");
+        } else if (i == 5) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_thefloat = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 5 Successsfully.");
+        } else if (i == 6) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_show = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 6 Successsfully.");
+        } else if (i == 7) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_rangsit = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 7 Successsfully.");
+        } else if (i == 8) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_bangsaen = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+                res.status(200).send({
+                  status: 200,
+                  message: "All Branch Successsfully.",
+                });
+              }
+            );
+          });
+          console.log("Branch 8 Successsfully.");
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ status: 500, message: error });
+      });
+  }
+});
+
+// ################ Sync Stock Itech to Admin ##############
+app.put("/syncItechtoAdmin", (req, res) => {
+  connection.query(
+    `UPDATE products p1 
+    LEFT JOIN productitech p2 ON p2.productCode = p1.product_id
+    SET 
+    p1.product_price = p2.price, 
+    p1.product_minprice = p2.minPrice, 
+    p1.stock_nny = p2.stock_nny, 
+    p1.stock_ramintra = p2.stock_ramintra, 
+    p1.stock_bangphlat = p2.stock_bangphlat, 
+    p1.stock_thefloat = p2.stock_thefloat, 
+    p1.stock_rangsit = p2.stock_rangsit,
+    p1.stock_bangsaen = p2.stock_bangsaen  
+    WHERE p1.product_id = p2.productCode`,
+    (err) => {
+      if (err) {
+        res.status(500).json({ status: 500, message: err });
+      } else {
+        res.status(200).send({
+          status: 200,
+          message: "ซิงค์ข้อมูลจาก Itech สำเร็จ.",
+        });
+      }
+    }
+  );
+});
+
+// ################ Update Stock ##############
+app.put("/update_stock", (req, res) => {
+  connection.query(
+    "UPDATE products SET status = 'N' WHERE (stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen) = 0",
+    (err) => {
+      if (err) throw err;
+      res.send("สถานะสินค้าอัพเดท.");
+    }
+  );
+});
+
+// ################ Edit Status ##############
+app.put("/edit_status/:id", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  connection.query(
+    `UPDATE products SET status = ? WHERE product_id = ?`,
+    [status, id],
+    (err) => {
+      if (err) throw err;
+      res.send("Data updated successsfully");
+    }
+  );
+});
+
 const serviceAccountKeyFile = "./amiable-poet-385904-447c730ebf42.json";
 const sheetId = "1DrsdnymjDzeFjcFEcQEMp1TTtTqh-SYiZK1WzLvenjI";
 const tabNames = [
@@ -80,7 +270,10 @@ app.get("/getdatasheet", async (req, res) => {
       tabNames,
       range
     );
-    res.send(data);
+    res.status(200).send({
+      status: 200,
+      message: data,
+    });
     async function _getGoogleSheetClient() {
       const auth = new google.auth.GoogleAuth({
         keyFile: serviceAccountKeyFile,
@@ -759,7 +952,7 @@ app.get("/getdatasheet", async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error retrieving data from Google Sheet");
+    res.status(500).json({ status: 500, message: err });
   }
 });
 
@@ -769,7 +962,7 @@ app.get("/monitor", (req, res) => {
     FROM pd_monitor pd 
     LEFT JOIN pd_group g ON g.mnt_group_id = pd.mnt_group 
     LEFT JOIN products p ON p.product_id = pd.mnt_id 
-    WHERE pd.mnt_status="Y" 
+    WHERE p.status="Y" 
 		ORDER BY CASE g.mnt_group_id 
 		WHEN "001" THEN 1 
 		WHEN "002" THEN 2 
@@ -817,47 +1010,14 @@ app.post("/admin_data", (req, res) => {
   );
 });
 
-app.put("/update_stock_mnt", (req, res) => {
-  connection.query(
-    "UPDATE pd_monitor SET mnt_status = 'N' WHERE (SELECT SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen) FROM products GROUP BY mnt_id) = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 app.put("/edit/:id", (req, res) => {
   const { id } = req.params;
-  const {
-    group,
-    brand,
-    model,
-    size,
-    hz,
-    panel,
-    resolution,
-    curve,
-    status,
-    href,
-  } = req.body;
+  const { group, brand, model, size, hz, panel, resolution, curve, href } =
+    req.body;
   connection.query(
     `UPDATE pd_monitor SET mnt_group = ?, mnt_brand = ?, mnt_model = ?, mnt_size = ?, mnt_refresh_rate = ?, 
-    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_status = ?, mnt_href = ? WHERE mnt_id = ?`,
-    [group, brand, model, size, hz, panel, resolution, curve, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_monitor SET mnt_status = ? WHERE mnt_id = ?`,
-    [status, id],
+    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_href = ? WHERE mnt_id = ?`,
+    [group, brand, model, size, hz, panel, resolution, curve, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -877,33 +1037,23 @@ app.delete("/admin_del/:id", (req, res) => {
 
 app.get("/case", (req, res) => {
   connection.query(
-    `SELECT * FROM pd_case WHERE case_status="Y" ORDER BY CASE case_group WHEN "ZONE iHAVECPU" THEN 1 WHEN "ZONE C" THEN 2 WHEN "ZONE A" THEN 3 WHEN "ZONE B" THEN 4 WHEN "ZONE ITX" THEN 5 end, case_brand, case_model, case_color ASC`,
+    `SELECT * FROM pd_case p1
+    LEFT JOIN products p ON p.product_id = p1.case_id 
+    WHERE p.status="Y" ORDER BY CASE p1.case_group WHEN "ZONE iHAVECPU" THEN 1 WHEN "ZONE C" THEN 2 WHEN "ZONE A" THEN 3 WHEN "ZONE B" THEN 4 WHEN "ZONE ITX" THEN 5 end, 
+    p1.case_brand, p1.case_model, p1.case_color ASC`,
     function (err, results) {
       res.send(results);
     }
   );
 });
 
-app.put("/edit_status_case/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_case SET case_status = ? WHERE case_id = ?`,
-    [status, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
 app.put("/edit_case/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, status, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_case SET case_group = ?, case_brand = ?, case_model = ?, case_color = ?, 
-     case_status = ?, case_href = ? WHERE case_id = ?`,
-    [group, brand, model, color, status, href, id],
+     case_href = ? WHERE case_id = ?`,
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -919,23 +1069,13 @@ app.delete("/admin_del_case/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_case", (req, res) => {
-  connection.query(
-    "UPDATE pd_case SET case_status = 'N' WHERE case_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- NOTEBOOK ----------------
 
 app.get("/nb", (req, res) => {
   connection.query(
     `SELECT * FROM pd_nb p1
     LEFT JOIN products p2 ON p2.product_id = p1.nb_id 
-    WHERE p1.nb_status="Y" 
+    WHERE p2.status="Y" 
     ORDER BY CASE p1.nb_group WHEN "Gaming" THEN 1 WHEN "Non-gaming" THEN 2 END, p1.nb_brand, p2.product_price ASC`,
     function (err, results) {
       res.send(results);
@@ -957,19 +1097,6 @@ app.put("/edit_nb/:id", (req, res) => {
   );
 });
 
-app.put("/edit_status_nb/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_nb SET nb_status = ? WHERE nb_id = ?`,
-    [status, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
 app.delete("/admin_del_nb/:id", (req, res) => {
   const id = req.params.id;
   connection.query("DELETE FROM pd_nb WHERE nb_id = ?", id, (error) => {
@@ -978,23 +1105,13 @@ app.delete("/admin_del_nb/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_nb", (req, res) => {
-  connection.query(
-    "UPDATE pd_nb SET nb_status = 'N' WHERE nb_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- LIQUID COOLING ----------------
 
 app.get("/lc", (req, res) => {
   connection.query(
     `SELECT * FROM pd_liquid p1 
     LEFT JOIN products p2 ON p2.product_id = p1.lc_id
-    WHERE p1.lc_status="Y" ORDER BY p1.lc_group, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p1.lc_group, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1003,24 +1120,11 @@ app.get("/lc", (req, res) => {
 
 app.put("/edit_lc/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, status, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_liquid SET lc_group = ?, lc_brand = ?, lc_model = ?, lc_color = ?, 
-     lc_status = ?, lc_href = ? WHERE lc_id = ?`,
-    [group, brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_lc/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_liquid SET lc_status = ? WHERE lc_id = ?`,
-    [status, id],
+     lc_href = ? WHERE lc_id = ?`,
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1036,23 +1140,13 @@ app.delete("/admin_del_lc/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_lc", (req, res) => {
-  connection.query(
-    "UPDATE pd_liquid SET lc_status = 'N' WHERE lc_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- FAN ----------------
 
 app.get("/fan", (req, res) => {
   connection.query(
     `SELECT * FROM pd_fan p1 
     LEFT JOIN products p2 ON p2.product_id = p1.f_id 
-    WHERE p1.f_status="Y" ORDER BY p1.f_group, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p1.f_group, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1061,24 +1155,11 @@ app.get("/fan", (req, res) => {
 
 app.put("/edit_fan/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, status, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_fan SET f_group = ?, f_brand = ?, f_model = ?, f_color = ?, 
-     f_status = ?, f_href = ? WHERE f_id = ?`,
-    [group, brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_fan/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_fan SET f_status = ? WHERE f_id = ?`,
-    [status, id],
+     f_href = ? WHERE f_id = ?`,
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1094,23 +1175,13 @@ app.delete("/admin_del_fan/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_fan", (req, res) => {
-  connection.query(
-    "UPDATE pd_fan SET f_status = 'N' WHERE f_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- HEADSET ----------------
 
 app.get("/hs", (req, res) => {
   connection.query(
     `SELECT * FROM pd_headset p1 
     LEFT JOIN products p2 ON p2.product_id = p1.hs_id 
-    WHERE p1.hs_status="Y" ORDER BY p1.hs_group, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p1.hs_group, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1119,24 +1190,11 @@ app.get("/hs", (req, res) => {
 
 app.put("/edit_hs/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, status, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_headset SET hs_group = ?, hs_brand = ?, hs_model = ?, hs_color = ?, 
-     hs_status = ?, hs_href = ? WHERE hs_id = ?`,
-    [group, brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_hs/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_headset SET hs_status = ? WHERE hs_id = ?`,
-    [status, id],
+     hs_href = ? WHERE hs_id = ?`,
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1152,23 +1210,13 @@ app.delete("/admin_del_hs/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_hs", (req, res) => {
-  connection.query(
-    "UPDATE pd_headset SET hs_status = 'N' WHERE hs_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- KEYBOARD ----------------
 
 app.get("/kb", (req, res) => {
   connection.query(
     `SELECT * FROM pd_kb p1 
     LEFT JOIN products p2 ON p2.product_id = p1.kb_id 
-    WHERE p1.kb_status="Y" ORDER BY CASE p1.kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 WHEN "BAREBONE/100%" THEN 9 WHEN "BAREBONE/98%" THEN 10 WHEN "BAREBONE/75%" THEN 11 END, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY CASE p1.kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 WHEN "BAREBONE/100%" THEN 9 WHEN "BAREBONE/98%" THEN 10 WHEN "BAREBONE/75%" THEN 11 END, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1177,24 +1225,11 @@ app.get("/kb", (req, res) => {
 
 app.put("/edit_kb/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, sw, color, connect, status, href } = req.body;
+  const { group, brand, model, sw, color, connect, href } = req.body;
   connection.query(
     `UPDATE pd_kb SET kb_group = ?, kb_brand = ?, kb_model = ?, kb_switch = ?, kb_color = ?, kb_connect = ?, 
-     kb_status = ?, kb_href = ? WHERE kb_id = ?`,
-    [group, brand, model, sw, color, connect, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_kb/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_kb SET kb_status = ? WHERE kb_id = ?`,
-    [status, id],
+     kb_href = ? WHERE kb_id = ?`,
+    [group, brand, model, sw, color, connect, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1210,23 +1245,13 @@ app.delete("/admin_del_kb/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_kb", (req, res) => {
-  connection.query(
-    "UPDATE pd_kb SET kb_status = 'N' WHERE kb_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- CHAIR ----------------
 
 app.get("/ch", (req, res) => {
   connection.query(
     `SELECT * FROM pd_chair p1 
     LEFT JOIN products p2 ON p2.product_id = p1.ch_id 
-    WHERE p1.ch_status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1235,24 +1260,11 @@ app.get("/ch", (req, res) => {
 
 app.put("/edit_ch/:id", (req, res) => {
   const { id } = req.params;
-  const { brand, model, color, status, href } = req.body;
+  const { brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_chair SET ch_brand = ?, ch_model = ?, ch_color = ?, 
-     ch_status = ?, ch_href = ? WHERE ch_id = ?`,
-    [brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_ch/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_chair SET ch_status = ? WHERE ch_id = ?`,
-    [status, id],
+    ch_href = ? WHERE ch_id = ?`,
+    [brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1268,23 +1280,13 @@ app.delete("/admin_del_ch/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_ch", (req, res) => {
-  connection.query(
-    "UPDATE pd_chair SET ch_status = 'N' WHERE ch_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- MOUSE ----------------
 
 app.get("/m", (req, res) => {
   connection.query(
     `SELECT * FROM pd_mouse p1 
     LEFT JOIN products p2 ON p2.product_id = p1.m_id 
-    WHERE p1.m_status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1293,24 +1295,11 @@ app.get("/m", (req, res) => {
 
 app.put("/edit_m/:id", (req, res) => {
   const { id } = req.params;
-  const { brand, model, color, type, status, href } = req.body;
+  const { brand, model, color, type, href } = req.body;
   connection.query(
     `UPDATE pd_mouse SET m_brand = ?, m_model = ?, m_color = ?, m_type = ?, 
-     m_status = ?, m_href = ? WHERE m_id = ?`,
-    [brand, model, color, type, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_m/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_mouse SET m_status = ? WHERE m_id = ?`,
-    [status, id],
+     m_href = ? WHERE m_id = ?`,
+    [brand, model, color, type, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1326,23 +1315,13 @@ app.delete("/admin_del_m/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_m", (req, res) => {
-  connection.query(
-    "UPDATE pd_mouse SET m_status = 'N' WHERE m_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- MOUSE PAD ----------------
 
 app.get("/mp", (req, res) => {
   connection.query(
     `SELECT * FROM pd_mousepad p1 
     LEFT JOIN products p2 ON p2.product_id = p1.mp_id 
-    WHERE p1.mp_status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1351,24 +1330,11 @@ app.get("/mp", (req, res) => {
 
 app.put("/edit_mp/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, dimentions, status, href } = req.body;
+  const { group, brand, model, color, dimentions, href } = req.body;
   connection.query(
     `UPDATE pd_mousepad SET mp_group = ?, mp_brand = ?, mp_model = ?, mp_color = ?, mp_dimentions = ?, 
-     mp_status = ?, mp_href = ? WHERE mp_id = ?`,
-    [group, brand, model, color, dimentions, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_mp/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_mousepad SET mp_status = ? WHERE mp_id = ?`,
-    [status, id],
+     mp_href = ? WHERE mp_id = ?`,
+    [group, brand, model, color, dimentions, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1384,23 +1350,13 @@ app.delete("/admin_del_mp/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_mp", (req, res) => {
-  connection.query(
-    "UPDATE pd_mousepad SET mp_status = 'N' WHERE mp_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- MICE ----------------
 
 app.get("/mic", (req, res) => {
   connection.query(
     `SELECT * FROM pd_mic p1 
     LEFT JOIN products p2 ON p2.product_id = p1.mic_id 
-    WHERE p1.mic_status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1409,24 +1365,11 @@ app.get("/mic", (req, res) => {
 
 app.put("/edit_mic/:id", (req, res) => {
   const { id } = req.params;
-  const { brand, model, color, status, href } = req.body;
+  const { brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_mic SET mic_brand = ?, mic_model = ?, mic_color = ?, 
-     mic_status = ?, mic_href = ? WHERE mic_id = ?`,
-    [brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_mic/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_mic SET mic_status = ? WHERE mic_id = ?`,
-    [status, id],
+     mic_href = ? WHERE mic_id = ?`,
+    [brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1442,23 +1385,13 @@ app.delete("/admin_del_mic/:id", (req, res) => {
   });
 });
 
-app.put("/update_stock_mic", (req, res) => {
-  connection.query(
-    "UPDATE pd_mic SET mic_status = 'N' WHERE mic_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
-});
-
 //----------------- SINK ----------------
 
 app.get("/sink", (req, res) => {
   connection.query(
     `SELECT * FROM pd_sink p1 
     LEFT JOIN products p2 ON p2.product_id = p1.s_id
-    WHERE p1.s_status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p1.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1467,24 +1400,11 @@ app.get("/sink", (req, res) => {
 
 app.put("/edit_s/:id", (req, res) => {
   const { id } = req.params;
-  const { brand, model, color, status, href } = req.body;
+  const { brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_sink SET s_brand = ?, s_model = ?, s_color = ?, 
-     s_status = ?, s_href = ? WHERE s_id = ?`,
-    [brand, model, color, status, href, id],
-    (err) => {
-      if (err) throw err;
-      res.send("Data updated successsfully");
-    }
-  );
-});
-
-app.put("/edit_status_s/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  connection.query(
-    `UPDATE pd_sink SET s_status = ? WHERE s_id = ?`,
-    [status, id],
+     s_href = ? WHERE s_id = ?`,
+    [brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
@@ -1498,16 +1418,6 @@ app.delete("/admin_del_s/:id", (req, res) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
-});
-
-app.put("/update_stock_s", (req, res) => {
-  connection.query(
-    "UPDATE pd_sink SET s_status = 'N' WHERE s_stock_sum = 0",
-    (err) => {
-      if (err) throw err;
-      res.send("Stock updated.");
-    }
-  );
 });
 
 app.listen(process.env.PORT || 3000);
