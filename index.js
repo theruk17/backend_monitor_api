@@ -1391,7 +1391,7 @@ app.get("/sink", (req, res) => {
   connection.query(
     `SELECT * FROM pd_sink p1 
     LEFT JOIN products p2 ON p2.product_id = p1.s_id
-    WHERE p1.status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
