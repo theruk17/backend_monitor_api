@@ -1085,11 +1085,11 @@ app.get("/nb", (req, res) => {
 
 app.put("/edit_nb/:id", (req, res) => {
   const { id } = req.params;
-  const { group, brand, model, color, status, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_nb SET nb_group = ?, nb_brand = ?, nb_model = ?, nb_color = ?, 
-     nb_status = ?, nb_href = ? WHERE nb_id = ?`,
-    [group, brand, model, color, status, href, id],
+     nb_href = ? WHERE nb_id = ?`,
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
