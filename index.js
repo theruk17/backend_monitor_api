@@ -229,6 +229,79 @@ app.put("/update_stock", (req, res) => {
   );
 });
 
+app.get("/getpricefromsheet", async (req, res) => {
+  try {
+    const serviceAccountKeyFile = "./amiable-poet-385904-447c730ebf42.json";
+    const sheetId = "17MSuD2ipaJBh36zu4NbW8DLEltEDiMT-0AjSbUKxn1Q";
+    const tabNames = ["QUERY"];
+    const range = "A2:I";
+    const googleSheetClient = await _getGoogleSheetClient();
+    const data = await _readGoogleSheet(
+      googleSheetClient,
+      sheetId,
+      tabNames,
+      range
+    );
+    res.status(200).send({
+      status: 200,
+      message: data,
+    });
+    async function _getGoogleSheetClient() {
+      const auth = new google.auth.GoogleAuth({
+        keyFile: serviceAccountKeyFile,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+      const authClient = await auth.getClient();
+      return google.sheets({
+        version: "v4",
+        auth: authClient,
+      });
+    }
+
+    async function _readGoogleSheet(
+      googleSheetClient,
+      sheetId,
+      tabNames,
+      range
+    ) {
+      for (let tabName of tabNames) {
+        const res = await googleSheetClient.spreadsheets.values.get({
+          spreadsheetId: sheetId,
+          range: `${tabName}!${range}`,
+        });
+
+        let index = 1;
+        res.data.values.forEach(async (row) => {
+          if (!row[0]) {
+            return;
+          }
+          switch (tabName) {
+            case "QUERY":
+              connection.query(
+                `UPDATE products SET product_price = ?, product_minprice = ? WHERE product_id = ?`,
+                [
+                  row[7].replace(",", "").replace(".00", ""),
+                  row[5].replace(",", "").replace(".00", ""),
+                  row[0],
+                ],
+                function (err) {
+                  if (err) throw err;
+                }
+              );
+              break;
+            default:
+              break;
+          }
+        });
+      }
+      return "Updated Price Successfully ";
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 500, message: err });
+  }
+});
+
 // ################ Edit Status ##############
 app.put("/edit_status/:id", (req, res) => {
   const { id } = req.params;
