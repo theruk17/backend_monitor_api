@@ -331,41 +331,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -381,33 +350,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[4] == "" ? 0 : row[4].replace(",", "").replace(".00", ""),
-                  row[5] == "" ? 0 : row[5].replace(",", "").replace(".00", ""),
-                  row[6],
-                  row[7],
-                  row[8],
-                  row[9],
-                  row[10],
-                  row[11],
-
-                  row[0],
-                  row[4] == "" ? 0 : row[4].replace(",", "").replace(".00", ""),
-                  row[5] == "" ? 0 : row[5].replace(",", "").replace(".00", ""),
-                  row[6],
-                  row[7],
-                  row[8],
-                  row[9],
-                  row[10],
-                  row[11],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -445,41 +391,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -495,41 +410,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -545,41 +429,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -595,41 +448,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -655,41 +477,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -705,41 +496,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -755,41 +515,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -805,41 +534,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[14] == ""
-                    ? 0
-                    : row[14].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -855,41 +553,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[13] == ""
-                    ? 0
-                    : row[13].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
@@ -905,41 +572,10 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id, product_price, product_minprice, stock_nny, stock_ramintra, stock_bangphlat, stock_thefloat, stock_rangsit, stock_bangsaen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE product_id = ?, product_price = ?, product_minprice = ?, stock_nny = ?, stock_ramintra = ?, stock_bangphlat = ?, stock_thefloat = ?, stock_rangsit = ?, stock_bangsaen = ?`,
-                [
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-
-                  row[0],
-                  row[11] == ""
-                    ? 0
-                    : row[11].replace(",", "").replace(".00", ""),
-                  row[12] == ""
-                    ? 0
-                    : row[12].replace(",", "").replace(".00", ""),
-                  row[2],
-                  row[3],
-                  row[4],
-                  row[5],
-                  row[6],
-                  row[7],
-                ],
+                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
+                [row[0], row[0]],
                 function (err) {
                   if (err) throw err;
-
-                  console.log(index++ + `. ${row[1]}`);
                 }
               );
               break;
