@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
 const axios = require("axios");
+const { text } = require("body-parser");
 require("dotenv").config();
 
 const dir = path.join(__dirname, "uploads");
@@ -340,9 +341,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "CASE":
               connection.query(
-                `INSERT INTO pd_case (case_id, case_brand, case_model) VALUES (?, ?, ?) 
-              ON DUPLICATE KEY UPDATE case_id = ?`,
-                [row[0], row[13], row[1], row[0]],
+                `INSERT INTO pd_case (case_id, case_brand, case_group, case_model) VALUES (?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE case_id = ?, case_group = ?`,
+                [row[0], row[13], row[14], row[1], row[0], row[14]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -456,25 +457,40 @@ app.get("/getdatasheet", async (req, res) => {
               );
               break;
             case "KB":
-              connection.query(
-                `INSERT INTO pd_kb (kb_id, kb_connect, kb_group, kb_brand, kb_model) VALUES (?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE kb_id = ?, kb_connect = ?, kb_group = ?`,
-                [
-                  row[0],
-                  row[9],
-                  row[10],
-                  row[15],
-                  row[1],
+              const text1 = row[1].split(" ");
+              const a1 = text1[0];
+              if (a1 === "KEYBOARD") {
+                connection.query(
+                  `INSERT INTO pd_kb (kb_id, kb_connect, kb_group, kb_brand, kb_model) VALUES (?, ?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE kb_id = ?, kb_connect = ?, kb_group = ?`,
+                  [
+                    row[0],
+                    row[9],
+                    row[10],
+                    row[15],
+                    row[1],
 
-                  row[0],
-                  row[9],
-                  row[10],
-                ],
-                function (err) {
-                  if (err) throw err;
-                  console.log(index++ + `. ${row[1]}`);
-                }
-              );
+                    row[0],
+                    row[9],
+                    row[10],
+                  ],
+                  function (err) {
+                    if (err) throw err;
+                    console.log(index++ + `. ${row[1]}`);
+                  }
+                );
+              } else if (a1 === "KEYCAP") {
+                connection.query(
+                  `INSERT INTO pd_keycap (kc_id, kc_group, kc_brand, kc_model) VALUES (?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE kc_id = ?, kc_group = ?, kc_brand = ?`,
+                  [row[0], row[9], row[15], row[1], row[0], row[9], row[15]],
+                  function (err) {
+                    if (err) throw err;
+                    console.log(index++ + `. ${row[1]}`);
+                  }
+                );
+              }
+
               //------------------------------------------------
               connection.query(
                 `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
@@ -524,9 +540,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "M-PAD":
               connection.query(
-                `INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_dimentions) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE mp_id = ?`,
-                [row[0], row[15], row[1], row[10], row[0]],
+                `INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_group, mp_dimentions) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE mp_id = ?, mp_group = ?`,
+                [row[0], row[15], row[1], row[9], row[10], row[0], row[9]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -669,7 +685,7 @@ app.delete("/admin_del/:id", (req, res) => {
   });
 });
 
-//----------------- CASE
+//----------------- CASE --------------------------------
 
 app.get("/case", (req, res) => {
   connection.query(
@@ -876,6 +892,41 @@ app.put("/edit_kb/:id", (req, res) => {
 app.delete("/admin_del_kb/:id", (req, res) => {
   const id = req.params.id;
   connection.query("DELETE FROM pd_kb WHERE kb_id = ?", id, (error) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+//----------------- KEY CAP ----------------
+
+app.get("/kcap", (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_keycap p1 
+    LEFT JOIN products p2 ON p2.product_id = p1.kc_id 
+    WHERE p2.status="Y" ORDER BY p1.kc_group, p2.product_minprice ASC`,
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
+app.put("/edit_kcap/:id", (req, res) => {
+  const { id } = req.params;
+  const { group, brand, model, color, href } = req.body;
+  connection.query(
+    `UPDATE pd_keycap SET kc_group = ?, kc_brand = ?, kc_model = ?, kc_color = ?, 
+     kc_href = ? WHERE kc_id = ?`,
+    [group, brand, model, color, href, id],
+    (err) => {
+      if (err) throw err;
+      res.send("Data updated successsfully");
+    }
+  );
+});
+
+app.delete("/admin_del_kcap/:id", (req, res) => {
+  const id = req.params.id;
+  connection.query("DELETE FROM pd_keycap WHERE kc_id = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
