@@ -691,7 +691,7 @@ app.get("/case", (req, res) => {
   connection.query(
     `SELECT * FROM pd_case p1
     LEFT JOIN products p ON p.product_id = p1.case_id 
-    WHERE p.status="Y" ORDER BY CASE p1.case_group WHEN "ZONE iHAVECPU" THEN 1 WHEN "ZONE C" THEN 2 WHEN "ZONE A" THEN 3 WHEN "ZONE B" THEN 4 WHEN "ZONE ITX" THEN 5 end, 
+    WHERE p.status="Y" ORDER BY CASE p1.case_group WHEN "ZONE C" THEN 1 WHEN "ZONE A" THEN 2 WHEN "ZONE B" THEN 3 WHEN "ZONE EXPENSIVE" THEN 4 WHEN "ZONE ITX" THEN 5 end, 
     p1.case_brand, p1.case_model, p1.case_color ASC`,
     function (err, results) {
       res.send(results);
@@ -903,7 +903,7 @@ app.get("/kcap", (req, res) => {
   connection.query(
     `SELECT * FROM pd_keycap p1 
     LEFT JOIN products p2 ON p2.product_id = p1.kc_id 
-    WHERE p2.status="Y" ORDER BY p1.kc_group, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY CASE p1.kc_group WHEN "KEYCAP SINGLE" THEN 1 WHEN "KEYCAP SET" THEN 2 END, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
@@ -1008,7 +1008,7 @@ app.get("/mp", (req, res) => {
   connection.query(
     `SELECT * FROM pd_mousepad p1 
     LEFT JOIN products p2 ON p2.product_id = p1.mp_id 
-    WHERE p2.status="Y" ORDER BY p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY CASE p1.mp_group WHEN "SIZE S" THEN 1 WHEN "SIZE M" THEN 2 WHEN "SIZE XL" THEN 3 WHEN "SIZE XXL" THEN 4 WHEN "MOUSE FEET" THEN 5 END, p2.product_minprice ASC`,
     function (err, results) {
       res.send(results);
     }
