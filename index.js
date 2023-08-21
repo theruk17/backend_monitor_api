@@ -655,7 +655,7 @@ app.post("/admin_data", (req, res) => {
     `SELECT *,SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen) AS sumstock 
     FROM pd_${t_name} p1 
     LEFT JOIN products p2 ON p2.product_id = p1.${c_name}_id 
-    GROUP BY p1.${c_name}_id ORDER BY p1.${c_name}_brand ASC`,
+    GROUP BY p1.${c_name}_id ORDER BY p1.${c_name}_brand, p1.${c_name}_model ASC`,
     function (err, results) {
       res.send(results);
     }
