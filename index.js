@@ -868,7 +868,8 @@ app.get("/kb", (req, res) => {
   connection.query(
     `SELECT * FROM pd_kb p1 
     LEFT JOIN products p2 ON p2.product_id = p1.kb_id 
-    WHERE p2.status="Y" ORDER BY CASE p1.kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 WHEN "BAREBONE/100%" THEN 9 WHEN "BAREBONE/98%" THEN 10 WHEN "BAREBONE/75%" THEN 11 END, p2.product_minprice ASC`,
+    WHERE p2.status="Y" ORDER BY CASE p1.kb_group WHEN "FULL SIZE 100%" THEN 1 WHEN "98%" THEN 2 WHEN "96%" THEN 3 WHEN "TKL 80%" THEN 4 WHEN "75%" THEN 5 WHEN "65%" THEN 6 WHEN "60%" THEN 7 WHEN "NUMPAD" THEN 8 WHEN "BAREBONE/100%" THEN 9 WHEN "BAREBONE/98%" THEN 10 WHEN "BAREBONE/75%" THEN 11 END, 
+    p2.product_minprice, p1.kb_brand, p1.kb_model ASC`,
     function (err, results) {
       res.send(results);
     }
