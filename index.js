@@ -662,6 +662,19 @@ app.post("/admin_data", (req, res) => {
   );
 });
 
+app.get("/new_stock", (req, res) => {
+  connection.query(
+    `SELECT p2.* 
+    FROM products p1 
+    LEFT JOIN productitech p2 ON p2.productCode = p1.product_id
+    WHERE (p2.stock_nny || p2.stock_ramintra || p2.stock_bangphlat || p2.stock_thefloat || p2.stock_rangsit || p2.stock_bangsaen) > 0 AND p1.status="N"
+    ORDER BY p2.productName`,
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
 app.put("/edit/:id", (req, res) => {
   const { id } = req.params;
   const { group, brand, model, size, hz, panel, resolution, curve, href } =
