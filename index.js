@@ -667,7 +667,7 @@ app.get("/new_stock", (req, res) => {
     `SELECT p2.* 
     FROM products p1 
     LEFT JOIN productitech p2 ON p2.productCode = p1.product_id
-    WHERE (p2.stock_nny || p2.stock_ramintra || p2.stock_bangphlat || p2.stock_thefloat || p2.stock_rangsit || p2.stock_bangsaen) > 0 AND p1.status="N"
+    WHERE (p2.stock_nny || p2.stock_ramintra || p2.stock_bangphlat || p2.stock_thefloat || p2.stock_rangsit || p2.stock_bangsaen) > 0 AND p1.status="N" AND p2.productName NOT LIKE "%แถม%" 
     ORDER BY p2.productName`,
     function (err, results) {
       res.send(results);
