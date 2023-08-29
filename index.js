@@ -502,9 +502,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "CHAIR":
               connection.query(
-                `INSERT INTO pd_chair (ch_id, ch_brand, ch_model) VALUES (?, ?, ?) 
-              ON DUPLICATE KEY UPDATE ch_id = ?`,
-                [row[0], row[14], row[1], row[0]],
+                `INSERT INTO pd_chair (ch_id, ch_group, ch_brand, ch_model) VALUES (?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE ch_id = ?, ch_group = ?, ch_brand = ?`,
+                [row[0], row[9], row[14], row[1], row[0], row[9], row[14]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
