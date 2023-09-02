@@ -961,11 +961,11 @@ app.get("/ch", (req, res) => {
 
 app.put("/edit_ch/:id", (req, res) => {
   const { id } = req.params;
-  const { brand, model, color, href } = req.body;
+  const { group, brand, model, color, href } = req.body;
   connection.query(
-    `UPDATE pd_chair SET ch_brand = ?, ch_model = ?, ch_color = ?, 
+    `UPDATE pd_chair SET ch_group = ?, ch_brand = ?, ch_model = ?, ch_color = ?, 
     ch_href = ? WHERE ch_id = ?`,
-    [brand, model, color, href, id],
+    [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
       res.send("Data updated successsfully");
