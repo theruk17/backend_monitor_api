@@ -731,7 +731,7 @@ app.post("/getimages", (req, res) => {
 app.post("/getimagefront", (req, res) => {
   const { t_name } = req.body;
   connection.query(
-    `SELECT * FROM images_product WHERE product_id IN (SELECT ${t_name}_id FROM pd_${t_name})`,
+    `SELECT * FROM images_product WHERE product_id IN (SELECT ${t_name}_id FROM pd_${t_name}) ORDER BY sort ASC`,
     function (err, results) {
       res.send(results);
     }
