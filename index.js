@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
 const axios = require("axios");
+const fs = require("fs");
 const { text } = require("body-parser");
 require("dotenv").config();
 
@@ -39,27 +40,62 @@ app.get("/", (req, res) => {
 });
 
 app.post("/uploadimg", upload.single("file"), (req, res) => {
-  const { filename } = req.file;
-  const { id } = req.body;
-  const { t_name } = req.body;
-  const { c_name } = req.body;
-  connection.query(
-    `UPDATE pd_${t_name} SET ${c_name}_img = ? WHERE ${c_name}_id = ? `,
-    [filename, id],
-    function (err, results) {
-      if (err) {
-        console.error(err);
-        res.sendStatus(500);
-      } else {
-        res.sendStatus(200);
-      }
+  try {
+    const { filename } = req.file;
+    const { sort } = req.body;
+    const { id } = req.body;
+    connection.execute(
+      `INSERT INTO images_product (product_id, url, sort) VALUES (?, ?, ?)
+      ON DUPLICATE KEY UPDATE product_id = ?, url = ?, sort = ? `,
+      [id, filename, sort, id, filename, sort]
+    );
+
+    res.status(200).send({ message: "OK" });
+  } catch (error) {
+    res.status(500).json({ status: 500, message: error });
+  }
+});
+
+app.post("/updateimg", (req, res) => {
+  try {
+    const { file } = req.body;
+    const { sort } = req.body;
+    const { id } = req.body;
+    connection.query(
+      `UPDATE images_product SET sort = ? WHERE url = ? AND product_id = ?`,
+      [sort, file, id]
+    );
+    res.status(200).send({ message: "OK" });
+  } catch (error) {
+    res.status(500).json({ status: 500, message: error });
+  }
+});
+
+app.delete("/deleteimg/:filename", (req, res) => {
+  try {
+    const { filename } = req.params;
+    const filePath = path.join(__dirname, "uploads", filename);
+
+    if (filename !== "No-Image.jpg") {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Failed to delete image." });
+        }
+        connection.execute(`DELETE FROM images_product WHERE url = ?`, [
+          filename,
+        ]);
+
+        res.status(200).json({ message: "Image deleted successfully." });
+      });
     }
-  );
+  } catch (error) {
+    res.status(500).json({ status: 500, message: error });
+  }
 });
 
 // ################ get Stock Itech ##############
 app.post("/getStockItech", (req, res) => {
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 1; i < 10; i++) {
     let data = JSON.stringify({
       BranchID: i,
     });
@@ -146,17 +182,21 @@ app.post("/getStockItech", (req, res) => {
             );
           });
           console.log("Branch 5 Successsfully.");
-        } else if (i == 6) {
+        } else if (i == 9) {
           response.data.product.forEach(async (row) => {
             connection.query(
-              `UPDATE productitech SET stock_show = ? WHERE productCode = ?`,
+              `UPDATE productitech SET stock_rama2 = ? WHERE productCode = ?`,
               [row.numberStock, row.productCode],
               function (err) {
                 if (err) throw err;
+                res.status(200).send({
+                  status: 200,
+                  message: "All Branch Successsfully.",
+                });
               }
             );
           });
-          console.log("Branch 6 Successsfully.");
+          console.log("Branch 9 Successsfully.");
         } else if (i == 7) {
           response.data.product.forEach(async (row) => {
             connection.query(
@@ -175,14 +215,21 @@ app.post("/getStockItech", (req, res) => {
               [row.numberStock, row.productCode],
               function (err) {
                 if (err) throw err;
-                res.status(200).send({
-                  status: 200,
-                  message: "All Branch Successsfully.",
-                });
               }
             );
           });
           console.log("Branch 8 Successsfully.");
+        } else if (i == 6) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_show = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 6 Successsfully.");
         }
       })
       .catch((error) => {
@@ -204,7 +251,8 @@ app.put("/syncItechtoAdmin", (req, res) => {
     p1.stock_bangphlat = p2.stock_bangphlat, 
     p1.stock_thefloat = p2.stock_thefloat, 
     p1.stock_rangsit = p2.stock_rangsit,
-    p1.stock_bangsaen = p2.stock_bangsaen  
+    p1.stock_bangsaen = p2.stock_bangsaen, 
+    p1.stock_rama2 = p2.stock_rama2 
     WHERE p1.product_id = p2.productCode`,
     (err) => {
       if (err) {
@@ -222,7 +270,7 @@ app.put("/syncItechtoAdmin", (req, res) => {
 // ################ Update Stock ##############
 app.put("/update_stock", (req, res) => {
   connection.query(
-    "UPDATE products SET status = 'N' WHERE (stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen) = 0",
+    "UPDATE products SET status = 'N' WHERE (stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) = 0",
     (err) => {
       if (err) throw err;
       res.send("สถานะสินค้าอัพเดท.");
@@ -311,18 +359,18 @@ app.get("/getdatasheet", async (req, res) => {
               ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_resolution = ?, mnt_size = ?, mnt_panel = ?, mnt_refresh_rate = ?`,
                 [
                   row[0],
-                  row[19],
+                  row[21],
                   row[1],
-                  row[15],
-                  row[16],
                   row[17],
                   row[18],
+                  row[19],
+                  row[20],
 
                   row[0],
-                  row[15],
-                  row[16],
                   row[17],
                   row[18],
+                  row[19],
+                  row[20],
                 ],
                 function (err) {
                   if (err) throw err;
@@ -343,7 +391,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_case (case_id, case_brand, case_group, case_model) VALUES (?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE case_id = ?, case_group = ?`,
-                [row[0], row[13], row[14], row[1], row[0], row[14]],
+                [row[0], row[15], row[16], row[1], row[0], row[16]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -364,26 +412,26 @@ app.get("/getdatasheet", async (req, res) => {
               ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?`,
                 [
                   row[0],
-                  row[15],
-                  row[24],
-                  row[1],
-                  row[16],
                   row[17],
+                  row[26],
+                  row[1],
+                  row[18],
                   row[19],
-                  row[20],
                   row[21],
                   row[22],
                   row[23],
+                  row[24],
+                  row[25],
 
                   row[0],
-                  row[15],
-                  row[16],
                   row[17],
+                  row[18],
                   row[19],
-                  row[20],
                   row[21],
                   row[22],
                   row[23],
+                  row[24],
+                  row[25],
                 ],
                 function (err) {
                   if (err) throw err;
@@ -403,7 +451,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_liquid (lc_id, lc_group, lc_brand, lc_model) VALUES (?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE lc_id = ?, lc_group = ?`,
-                [row[0], row[9], row[10], row[1], row[0], row[9]],
+                [row[0], row[11], row[12], row[1], row[0], row[11]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -422,7 +470,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_fan (f_id, f_group, f_brand, f_model, f_color) VALUES (?, ?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE f_id = ?, f_group = ?`,
-                [row[0], row[13], row[14], row[1], row[15], row[0], row[13]],
+                [row[0], row[15], row[16], row[1], row[17], row[0], row[15]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -441,7 +489,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_headset (hs_id, hs_brand, hs_group, hs_model) VALUES (?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE hs_id = ?`,
-                [row[0], row[14], row[9], row[1], row[0]],
+                [row[0], row[16], row[11], row[1], row[0]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -466,13 +514,13 @@ app.get("/getdatasheet", async (req, res) => {
                   [
                     row[0],
                     row[9],
-                    row[10],
-                    row[15],
+                    row[12],
+                    row[17],
                     row[1],
 
                     row[0],
                     row[9],
-                    row[10],
+                    row[12],
                   ],
                   function (err) {
                     if (err) throw err;
@@ -483,7 +531,7 @@ app.get("/getdatasheet", async (req, res) => {
                 connection.query(
                   `INSERT INTO pd_keycap (kc_id, kc_group, kc_brand, kc_model) VALUES (?, ?, ?, ?) 
                 ON DUPLICATE KEY UPDATE kc_id = ?, kc_group = ?, kc_brand = ?`,
-                  [row[0], row[9], row[15], row[1], row[0], row[9], row[15]],
+                  [row[0], row[11], row[17], row[1], row[0], row[11], row[17]],
                   function (err) {
                     if (err) throw err;
                     console.log(index++ + `. ${row[1]}`);
@@ -504,7 +552,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_chair (ch_id, ch_group, ch_brand, ch_model) VALUES (?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE ch_id = ?, ch_group = ?, ch_brand = ?`,
-                [row[0], row[9], row[14], row[1], row[0], row[9], row[14]],
+                [row[0], row[11], row[16], row[1], row[0], row[11], row[16]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -523,7 +571,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_mouse (m_id, m_brand, m_model, m_type) VALUES (?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE m_id = ?`,
-                [row[0], row[15], row[1], row[9], row[0]],
+                [row[0], row[17], row[1], row[11], row[0]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -542,7 +590,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_group, mp_dimentions) VALUES (?, ?, ?, ?, ?) 
               ON DUPLICATE KEY UPDATE mp_id = ?, mp_group = ?`,
-                [row[0], row[15], row[1], row[9], row[10], row[0], row[9]],
+                [row[0], row[17], row[1], row[11], row[12], row[0], row[11]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -561,7 +609,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_mic (mic_id, mic_brand, mic_model) VALUES (?, ?, ?) 
               ON DUPLICATE KEY UPDATE mic_id = ?`,
-                [row[0], row[14], row[1], row[0]],
+                [row[0], row[16], row[1], row[0]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -580,7 +628,7 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO pd_sink (s_id, s_brand, s_model) VALUES (?, ?, ?) 
               ON DUPLICATE KEY UPDATE s_id = ?`,
-                [row[0], row[14], row[1], row[0]],
+                [row[0], row[16], row[1], row[0]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -652,10 +700,38 @@ app.get("/monitor_group", (req, res) => {
 app.post("/admin_data", (req, res) => {
   const { t_name, c_name } = req.body;
   connection.query(
-    `SELECT *,SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen) AS sumstock 
+    `SELECT p1.*,p2.*,
+		SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) AS sumstock,
+    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 0 THEN i.url ELSE NULL END) AS url_main,
+    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 1 THEN i.url ELSE NULL END) AS url_1,
+    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 2 THEN i.url ELSE NULL END) AS url_2, 
+		MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 3 THEN i.url ELSE NULL END) AS url_3
     FROM pd_${t_name} p1 
     LEFT JOIN products p2 ON p2.product_id = p1.${c_name}_id 
-    GROUP BY p1.${c_name}_id ORDER BY p1.${c_name}_brand, p1.${c_name}_model ASC`,
+    LEFT JOIN images_product i ON i.product_id = p1.${c_name}_id 
+    GROUP BY p1.${c_name}_id 
+    ORDER BY p1.${c_name}_brand, p1.${c_name}_model ASC`,
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
+app.post("/getimages", (req, res) => {
+  const { id } = req.body;
+  connection.query(
+    `SELECT * FROM images_product WHERE product_id = ? ORDER BY sort`,
+    [id],
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
+app.post("/getimagefront", (req, res) => {
+  const { t_name } = req.body;
+  connection.query(
+    `SELECT * FROM images_product WHERE product_id IN (SELECT ${t_name}_id FROM pd_${t_name})`,
     function (err, results) {
       res.send(results);
     }
