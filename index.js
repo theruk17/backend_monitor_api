@@ -40,6 +40,26 @@ app.get("/", (req, res) => {
 });
 
 app.post("/uploadimg", upload.single("file"), (req, res) => {
+  const { filename } = req.file;
+  const { id } = req.body;
+  const { t_name } = req.body;
+  const { c_name } = req.body;
+  connection.query(
+    `UPDATE pd_${t_name} SET ${c_name}_img = ? WHERE ${c_name}_id = ? `,
+    [filename, id],
+    function (err, results) {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
+});
+
+// ** UPLOAD IMAGES
+app.post("/uploadimgnew", upload.single("file"), (req, res) => {
   try {
     const { filename } = req.file;
     const { sort } = req.body;
