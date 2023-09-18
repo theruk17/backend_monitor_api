@@ -721,14 +721,10 @@ app.post("/admin_data", (req, res) => {
   const { t_name, c_name } = req.body;
   connection.query(
     `SELECT p1.*,p2.*,
-		SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) AS sumstock,
-    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 0 THEN i.url ELSE NULL END) AS url_main,
-    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 1 THEN i.url ELSE NULL END) AS url_1,
-    MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 2 THEN i.url ELSE NULL END) AS url_2, 
-		MAX(CASE WHEN p2.product_id = p1.${c_name}_id  AND i.sort = 3 THEN i.url ELSE NULL END) AS url_3
+		SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) AS sumstock,i.url AS url_main 
     FROM pd_${t_name} p1 
     LEFT JOIN products p2 ON p2.product_id = p1.${c_name}_id 
-    LEFT JOIN images_product i ON i.product_id = p1.${c_name}_id 
+    LEFT JOIN (SELECT product_id,url FROM images_product WHERE sort = 0) i ON i.product_id = p1.${c_name}_id
     GROUP BY p1.${c_name}_id 
     ORDER BY p1.${c_name}_brand, p1.${c_name}_model ASC`,
     function (err, results) {
