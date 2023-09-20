@@ -5,11 +5,20 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
 const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const fs = require("fs");
 const { text } = require("body-parser");
 require("dotenv").config();
 
 const dir = path.join(__dirname, "uploads");
+const saltRounds = 10;
+
+const jwtConfig = {
+  secret: process.env.JWT_SECRET,
+  expirationTime: process.env.JWT_EXPIRATION,
+  refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
+};
 
 const app = express();
 
@@ -18,8 +27,64 @@ app.use(express.json());
 app.use(express.static(dir));
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
+
 const token = process.env.TOKEN;
 const url = process.env.URL;
+
+const jwtValidate = (req, res, next) => {
+  try {
+    const token = req.body.headers.Authorization || req.headers.Authorization;
+    if (!token) return res.status(401).send({ message: "No Token" });
+
+    const tokens = token.replace("Bearer ", "");
+
+    jwt.verify(tokens, jwtConfig.secret, (err, decoded) => {
+      if (err) throw new Error(err);
+    });
+    next();
+  } catch (error) {
+    return res.sendStatus(403);
+  }
+};
+
+const jwtRefreshTokenValidate = (req, res, next) => {
+  try {
+    const token = req.body.headers.Authorization || req.headers.Authorization;
+    if (!token) return res.sendStatus(401);
+
+    const tokens = token.replace("Bearer ", "");
+
+    jwt.verify(tokens, jwtConfig.refreshTokenSecret, (err, decoded) => {
+      if (err) {
+        const oldTokenDecoded = jwt.decode(token, { complete: true });
+
+        const { id: userId } = oldTokenDecoded.payload;
+        connection.query(
+          "SELECT * FROM users",
+          function (err, results, fields) {
+            const user = results.find((u) => u.id === userId);
+            const accessToken = jwt.sign(
+              { id: userId },
+              jwtConfig.refreshTokenSecret,
+              {
+                expiresIn: jwtConfig.expirationTime,
+              }
+            );
+            const response = {
+              accessToken,
+              userData: { ...user, password: undefined },
+            };
+
+            res.status(200).send(response);
+          }
+        );
+      }
+    });
+    next();
+  } catch (error) {
+    return res.sendStatus(403);
+  }
+};
 
 // Multer configuration for file upload
 const storage = multer.diskStorage({
@@ -35,9 +100,66 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.get("/", (req, res) => {
+app.get("/", jwtValidate, (req, res) => {
   res.send("Hello World!");
 });
+
+// ** REGISTER
+app.post("/auth/register", (req, res) => {
+  const { username, password, fname, lname } = req.body;
+  bcrypt.hash(password, saltRounds, function (err, hash) {
+    connection.query(
+      "INSERT INTO users (username, password, fname, lname) VALUES (?, ?, ?, ?)",
+      [username, hash, fname, lname],
+      function (err, results, fields) {
+        res.send(results);
+        console.log(user);
+      }
+    );
+  });
+});
+
+// ** LOGIN
+app.post("/auth/login", (req, res) => {
+  const { username, password } = req.body;
+
+  let error = {
+    message: ["Something went wrong"],
+  };
+  connection.query("SELECT * FROM users", function (err, results, fields) {
+    bcrypt.compare(password, results[0].password, function (err, isLogin) {
+      if (isLogin) {
+        const user = results.find((u) => u.username === username);
+
+        if (user) {
+          const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret, {
+            expiresIn: jwtConfig.expirationTime,
+          });
+
+          const response = {
+            accessToken,
+            userData: { ...user, password: undefined },
+          };
+
+          res.status(200).send(response);
+        } else {
+          error = {
+            message: ["username or Password is Invalid"],
+          };
+
+          res.status(400).send(error);
+        }
+      } else {
+        res.status(400).send({
+          status: 400,
+          message: "username or Password is Invalid",
+        });
+      }
+    });
+  });
+});
+
+app.post("/auth/refresh", jwtRefreshTokenValidate, (req, res) => {});
 
 app.post("/uploadimg", upload.single("file"), (req, res) => {
   const { filename } = req.file;
@@ -717,7 +839,7 @@ app.get("/monitor_group", (req, res) => {
   );
 });
 
-app.post("/admin_data", (req, res) => {
+app.post("/admin_data", jwtValidate, (req, res) => {
   const { t_name, c_name } = req.body;
   connection.query(
     `SELECT p1.*,p2.*,
@@ -725,7 +847,7 @@ app.post("/admin_data", (req, res) => {
     FROM pd_${t_name} p1 
     LEFT JOIN products p2 ON p2.product_id = p1.${c_name}_id 
     LEFT JOIN (SELECT product_id,url FROM images_product WHERE sort = 0) i ON i.product_id = p1.${c_name}_id
-    GROUP BY p1.${c_name}_id 
+    GROUP BY p1.${c_name}_id, i.url
     ORDER BY p1.${c_name}_brand, p1.${c_name}_model ASC`,
     function (err, results) {
       res.send(results);
