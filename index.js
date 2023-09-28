@@ -324,17 +324,17 @@ app.post("/getStockItech", (req, res) => {
             );
           });
           console.log("Branch 5 Successsfully.");
-        } else if (i == 9) {
+        } else if (i === 9) {
           response.data.product.forEach(async (row) => {
             connection.query(
               `UPDATE productitech SET stock_rama2 = ? WHERE productCode = ?`,
               [row.numberStock, row.productCode],
               function (err) {
                 if (err) throw err;
-                res.status(200).send({
+                /* res.status(200).send({
                   status: 200,
                   message: "All Branch Successsfully.",
-                });
+                }); */
               }
             );
           });
