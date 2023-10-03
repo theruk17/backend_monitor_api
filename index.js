@@ -425,7 +425,7 @@ app.put("/edit_status/:id", (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   connection.query(
-    `UPDATE products SET status = ? WHERE product_id = ?`,
+    `UPDATE products SET status = ? WHERE sku = ?`,
     [status, id],
     (err) => {
       if (err) throw err;
@@ -450,7 +450,7 @@ const tabNames = [
   "MICE",
   "SINK",
 ];
-const range = "A3:Z";
+const range = "A3:AC";
 
 app.get("/getdatasheet", async (req, res) => {
   try {
@@ -497,10 +497,11 @@ app.get("/getdatasheet", async (req, res) => {
           switch (tabName) {
             case "UPDATE MNT DATA":
               connection.query(
-                `INSERT INTO pd_monitor (mnt_id, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_panel, mnt_refresh_rate) VALUES (?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE mnt_id = ?, mnt_resolution = ?, mnt_size = ?, mnt_panel = ?, mnt_refresh_rate = ?`,
+                `INSERT INTO pd_monitor (mnt_id, sku, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_panel, mnt_refresh_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE mnt_id = ?, sku = ?, mnt_resolution = ?, mnt_size = ?, mnt_panel = ?, mnt_refresh_rate = ?`,
                 [
                   row[0],
+                  row[24],
                   row[21],
                   row[1],
                   row[17],
@@ -509,6 +510,7 @@ app.get("/getdatasheet", async (req, res) => {
                   row[20],
 
                   row[0],
+                  row[24],
                   row[17],
                   row[18],
                   row[19],
@@ -522,8 +524,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[24], row[0], row[24]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -531,9 +533,19 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "CASE":
               connection.query(
-                `INSERT INTO pd_case (case_id, case_brand, case_group, case_model) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE case_id = ?, case_group = ?`,
-                [row[0], row[15], row[16], row[1], row[0], row[16]],
+                `INSERT INTO pd_case (case_id, sku, case_brand, case_group, case_model) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE case_id = ?, sku = ?, case_group = ?`,
+                [
+                  row[0],
+                  row[18],
+                  row[15],
+                  row[16],
+                  row[1],
+
+                  row[0],
+                  row[18],
+                  row[16],
+                ],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -541,8 +553,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[18], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -550,10 +562,11 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "NOTEBOOK":
               connection.query(
-                `INSERT INTO pd_nb (nb_id, nb_group, nb_brand, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE nb_id = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?`,
+                `INSERT INTO pd_nb (nb_id, sku, nb_group, nb_brand, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE nb_id = ?, sku = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?`,
                 [
                   row[0],
+                  row[28],
                   row[17],
                   row[26],
                   row[1],
@@ -566,6 +579,7 @@ app.get("/getdatasheet", async (req, res) => {
                   row[25],
 
                   row[0],
+                  row[28],
                   row[17],
                   row[18],
                   row[19],
@@ -582,8 +596,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[28], row[0], row[28]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -591,9 +605,19 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "LCS":
               connection.query(
-                `INSERT INTO pd_liquid (lc_id, lc_group, lc_brand, lc_model) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE lc_id = ?, lc_group = ?`,
-                [row[0], row[11], row[12], row[1], row[0], row[11]],
+                `INSERT INTO pd_liquid (lc_id, sku, lc_group, lc_brand, lc_model) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE lc_id = ?, sku = ?, lc_group = ?`,
+                [
+                  row[0],
+                  row[19],
+                  row[11],
+                  row[12],
+                  row[1],
+
+                  row[0],
+                  row[19],
+                  row[11],
+                ],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -601,8 +625,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[19], row[0], row[19]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -610,9 +634,20 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "FAN":
               connection.query(
-                `INSERT INTO pd_fan (f_id, f_group, f_brand, f_model, f_color) VALUES (?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE f_id = ?, f_group = ?`,
-                [row[0], row[15], row[16], row[1], row[17], row[0], row[15]],
+                `INSERT INTO pd_fan (f_id, sku, f_group, f_brand, f_model, f_color) VALUES (?, ?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE f_id = ?, sku = ?, f_group = ?`,
+                [
+                  row[0],
+                  row[18],
+                  row[15],
+                  row[16],
+                  row[1],
+                  row[17],
+
+                  row[0],
+                  row[18],
+                  row[15],
+                ],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -620,8 +655,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[18], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -629,9 +664,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "HEADSET":
               connection.query(
-                `INSERT INTO pd_headset (hs_id, hs_brand, hs_group, hs_model) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE hs_id = ?`,
-                [row[0], row[16], row[11], row[1], row[0]],
+                `INSERT INTO pd_headset (hs_id, sku, hs_brand, hs_group, hs_model) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE hs_id = ?, sku = ?`,
+                [row[0], row[17], row[16], row[11], row[1], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -639,8 +674,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[17], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -651,16 +686,18 @@ app.get("/getdatasheet", async (req, res) => {
               const a1 = text1[0];
               if (a1 === "KEYBOARD") {
                 connection.query(
-                  `INSERT INTO pd_kb (kb_id, kb_connect, kb_group, kb_brand, kb_model) VALUES (?, ?, ?, ?, ?) 
-                ON DUPLICATE KEY UPDATE kb_id = ?, kb_connect = ?, kb_group = ?`,
+                  `INSERT INTO pd_kb (kb_id, sku, kb_connect, kb_group, kb_brand, kb_model) VALUES (?, ?, ?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE kb_id = ?, sku = ?, kb_connect = ?, kb_group = ?`,
                   [
                     row[0],
+                    row[18],
                     row[9],
                     row[12],
                     row[17],
                     row[1],
 
                     row[0],
+                    row[18],
                     row[9],
                     row[12],
                   ],
@@ -671,9 +708,20 @@ app.get("/getdatasheet", async (req, res) => {
                 );
               } else if (a1 === "KEYCAP") {
                 connection.query(
-                  `INSERT INTO pd_keycap (kc_id, kc_group, kc_brand, kc_model) VALUES (?, ?, ?, ?) 
-                ON DUPLICATE KEY UPDATE kc_id = ?, kc_group = ?, kc_brand = ?`,
-                  [row[0], row[11], row[17], row[1], row[0], row[11], row[17]],
+                  `INSERT INTO pd_keycap (kc_id, sku, kc_group, kc_brand, kc_model) VALUES (?, ?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE kc_id = ?, sku = ?, kc_group = ?, kc_brand = ?`,
+                  [
+                    row[0],
+                    row[18],
+                    row[11],
+                    row[17],
+                    row[1],
+
+                    row[0],
+                    row[18],
+                    row[11],
+                    row[17],
+                  ],
                   function (err) {
                     if (err) throw err;
                     console.log(index++ + `. ${row[1]}`);
@@ -683,8 +731,8 @@ app.get("/getdatasheet", async (req, res) => {
 
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[18], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -692,9 +740,20 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "CHAIR":
               connection.query(
-                `INSERT INTO pd_chair (ch_id, ch_group, ch_brand, ch_model) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE ch_id = ?, ch_group = ?, ch_brand = ?`,
-                [row[0], row[11], row[16], row[1], row[0], row[11], row[16]],
+                `INSERT INTO pd_chair (ch_id, sku, ch_group, ch_brand, ch_model) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE ch_id = ?, sku = ?, ch_group = ?, ch_brand = ?`,
+                [
+                  row[0],
+                  row[17],
+                  row[11],
+                  row[16],
+                  row[1],
+
+                  row[0],
+                  row[17],
+                  row[11],
+                  row[16],
+                ],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -702,8 +761,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[17], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -711,9 +770,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "MOUSE":
               connection.query(
-                `INSERT INTO pd_mouse (m_id, m_brand, m_model, m_type) VALUES (?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE m_id = ?`,
-                [row[0], row[17], row[1], row[11], row[0]],
+                `INSERT INTO pd_mouse (m_id, sku, m_brand, m_model, m_type) VALUES (?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE m_id = ?, sku = ?`,
+                [row[0], row[17], row[16], row[1], row[11], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -721,8 +780,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[17], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -730,9 +789,20 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "M-PAD":
               connection.query(
-                `INSERT INTO pd_mousepad (mp_id, mp_brand, mp_model, mp_group, mp_dimentions) VALUES (?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE mp_id = ?, mp_group = ?`,
-                [row[0], row[17], row[1], row[11], row[12], row[0], row[11]],
+                `INSERT INTO pd_mousepad (mp_id, sku, mp_brand, mp_model, mp_group, mp_dimentions) VALUES (?, ?, ?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE mp_id = ?, sku = ?, mp_group = ?`,
+                [
+                  row[0],
+                  row[18],
+                  row[17],
+                  row[1],
+                  row[11],
+                  row[12],
+
+                  row[0],
+                  row[18],
+                  row[11],
+                ],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -740,8 +810,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[18], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -749,9 +819,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "MICE":
               connection.query(
-                `INSERT INTO pd_mic (mic_id, mic_brand, mic_model) VALUES (?, ?, ?) 
-              ON DUPLICATE KEY UPDATE mic_id = ?`,
-                [row[0], row[16], row[1], row[0]],
+                `INSERT INTO pd_mic (mic_id, sku, mic_brand, mic_model) VALUES (?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE mic_id = ?, sku = ?`,
+                [row[0], row[17], row[16], row[1], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -759,8 +829,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[17], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -768,9 +838,9 @@ app.get("/getdatasheet", async (req, res) => {
               break;
             case "SINK":
               connection.query(
-                `INSERT INTO pd_sink (s_id, s_brand, s_model) VALUES (?, ?, ?) 
-              ON DUPLICATE KEY UPDATE s_id = ?`,
-                [row[0], row[16], row[1], row[0]],
+                `INSERT INTO pd_sink (s_id, sku, s_brand, s_model) VALUES (?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE s_id = ?, sku = ?`,
+                [row[0], row[18], row[16], row[1], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                   console.log(index++ + `. ${row[1]}`);
@@ -778,8 +848,8 @@ app.get("/getdatasheet", async (req, res) => {
               );
               //------------------------------------------------
               connection.query(
-                `INSERT INTO products (product_id) VALUES (?) ON DUPLICATE KEY UPDATE product_id = ?`,
-                [row[0], row[0]],
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[18], row[0], row[18]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -895,7 +965,7 @@ app.put("/edit/:id", (req, res) => {
     req.body;
   connection.query(
     `UPDATE pd_monitor SET mnt_group = ?, mnt_brand = ?, mnt_model = ?, mnt_size = ?, mnt_refresh_rate = ?, 
-    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_href = ? WHERE mnt_id = ?`,
+    mnt_panel = ?, mnt_resolution = ?, mnt_curve = ?, mnt_href = ? WHERE sku = ?`,
     [group, brand, model, size, hz, panel, resolution, curve, href, id],
     (err) => {
       if (err) throw err;
@@ -906,7 +976,7 @@ app.put("/edit/:id", (req, res) => {
 
 app.delete("/admin_del/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_monitor WHERE mnt_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_monitor WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -931,7 +1001,7 @@ app.put("/edit_case/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_case SET case_group = ?, case_brand = ?, case_model = ?, case_color = ?, 
-     case_href = ? WHERE case_id = ?`,
+     case_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -942,7 +1012,7 @@ app.put("/edit_case/:id", (req, res) => {
 
 app.delete("/admin_del_case/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_case WHERE case_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_case WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -967,7 +1037,7 @@ app.put("/edit_nb/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_nb SET nb_group = ?, nb_brand = ?, nb_model = ?, nb_color = ?, 
-     nb_href = ? WHERE nb_id = ?`,
+     nb_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -978,7 +1048,7 @@ app.put("/edit_nb/:id", (req, res) => {
 
 app.delete("/admin_del_nb/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_nb WHERE nb_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_nb WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1002,7 +1072,7 @@ app.put("/edit_lc/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_liquid SET lc_group = ?, lc_brand = ?, lc_model = ?, lc_color = ?, 
-     lc_href = ? WHERE lc_id = ?`,
+     lc_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1013,7 +1083,7 @@ app.put("/edit_lc/:id", (req, res) => {
 
 app.delete("/admin_del_lc/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_liquid WHERE lc_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_liquid WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1037,7 +1107,7 @@ app.put("/edit_fan/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_fan SET f_group = ?, f_brand = ?, f_model = ?, f_color = ?, 
-     f_href = ? WHERE f_id = ?`,
+     f_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1048,7 +1118,7 @@ app.put("/edit_fan/:id", (req, res) => {
 
 app.delete("/admin_del_fan/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_fan WHERE f_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_fan WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1072,7 +1142,7 @@ app.put("/edit_hs/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_headset SET hs_group = ?, hs_brand = ?, hs_model = ?, hs_color = ?, 
-     hs_href = ? WHERE hs_id = ?`,
+     hs_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1083,7 +1153,7 @@ app.put("/edit_hs/:id", (req, res) => {
 
 app.delete("/admin_del_hs/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_headset WHERE hs_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_headset WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1108,7 +1178,7 @@ app.put("/edit_kb/:id", (req, res) => {
   const { group, brand, model, sw, color, connect, href } = req.body;
   connection.query(
     `UPDATE pd_kb SET kb_group = ?, kb_brand = ?, kb_model = ?, kb_switch = ?, kb_color = ?, kb_connect = ?, 
-     kb_href = ? WHERE kb_id = ?`,
+     kb_href = ? WHERE sku = ?`,
     [group, brand, model, sw, color, connect, href, id],
     (err) => {
       if (err) throw err;
@@ -1119,7 +1189,7 @@ app.put("/edit_kb/:id", (req, res) => {
 
 app.delete("/admin_del_kb/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_kb WHERE kb_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_kb WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1143,7 +1213,7 @@ app.put("/edit_kcap/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_keycap SET kc_group = ?, kc_brand = ?, kc_model = ?, kc_color = ?, 
-     kc_href = ? WHERE kc_id = ?`,
+     kc_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1154,7 +1224,7 @@ app.put("/edit_kcap/:id", (req, res) => {
 
 app.delete("/admin_del_kcap/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_keycap WHERE kc_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_keycap WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1178,7 +1248,7 @@ app.put("/edit_ch/:id", (req, res) => {
   const { group, brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_chair SET ch_group = ?, ch_brand = ?, ch_model = ?, ch_color = ?, 
-    ch_href = ? WHERE ch_id = ?`,
+    ch_href = ? WHERE sku = ?`,
     [group, brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1189,7 +1259,7 @@ app.put("/edit_ch/:id", (req, res) => {
 
 app.delete("/admin_del_ch/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_chair WHERE ch_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_chair WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1213,7 +1283,7 @@ app.put("/edit_m/:id", (req, res) => {
   const { brand, model, color, type, href } = req.body;
   connection.query(
     `UPDATE pd_mouse SET m_brand = ?, m_model = ?, m_color = ?, m_type = ?, 
-     m_href = ? WHERE m_id = ?`,
+     m_href = ? WHERE sku = ?`,
     [brand, model, color, type, href, id],
     (err) => {
       if (err) throw err;
@@ -1224,7 +1294,7 @@ app.put("/edit_m/:id", (req, res) => {
 
 app.delete("/admin_del_m/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_mouse WHERE m_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_mouse WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1248,7 +1318,7 @@ app.put("/edit_mp/:id", (req, res) => {
   const { group, brand, model, color, dimentions, href } = req.body;
   connection.query(
     `UPDATE pd_mousepad SET mp_group = ?, mp_brand = ?, mp_model = ?, mp_color = ?, mp_dimentions = ?, 
-     mp_href = ? WHERE mp_id = ?`,
+     mp_href = ? WHERE sku = ?`,
     [group, brand, model, color, dimentions, href, id],
     (err) => {
       if (err) throw err;
@@ -1259,7 +1329,7 @@ app.put("/edit_mp/:id", (req, res) => {
 
 app.delete("/admin_del_mp/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_mousepad WHERE mp_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_mousepad WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1283,7 +1353,7 @@ app.put("/edit_mic/:id", (req, res) => {
   const { brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_mic SET mic_brand = ?, mic_model = ?, mic_color = ?, 
-     mic_href = ? WHERE mic_id = ?`,
+     mic_href = ? WHERE sku = ?`,
     [brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1294,7 +1364,7 @@ app.put("/edit_mic/:id", (req, res) => {
 
 app.delete("/admin_del_mic/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_mic WHERE mic_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_mic WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
@@ -1318,7 +1388,7 @@ app.put("/edit_s/:id", (req, res) => {
   const { brand, model, color, href } = req.body;
   connection.query(
     `UPDATE pd_sink SET s_brand = ?, s_model = ?, s_color = ?, 
-     s_href = ? WHERE s_id = ?`,
+     s_href = ? WHERE sku = ?`,
     [brand, model, color, href, id],
     (err) => {
       if (err) throw err;
@@ -1329,7 +1399,7 @@ app.put("/edit_s/:id", (req, res) => {
 
 app.delete("/admin_del_s/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM pd_sink WHERE s_id = ?", id, (error) => {
+  connection.query("DELETE FROM pd_sink WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
