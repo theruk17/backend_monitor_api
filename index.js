@@ -126,37 +126,41 @@ app.post("/auth/login", (req, res) => {
   let error = {
     message: ["Something went wrong"],
   };
-  connection.query("SELECT * FROM users", function (err, results, fields) {
-    bcrypt.compare(password, results[0].password, function (err, isLogin) {
-      if (isLogin) {
-        const user = results.find((u) => u.username === username);
+  connection.query(
+    "SELECT * FROM users WHERE username = ?",
+    [username],
+    function (err, results, fields) {
+      bcrypt.compare(password, results[0].password, function (err, isLogin) {
+        if (isLogin) {
+          const user = results.find((u) => u.username === username);
 
-        if (user) {
-          const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret, {
-            expiresIn: jwtConfig.expirationTime,
-          });
+          if (user) {
+            const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret, {
+              expiresIn: jwtConfig.expirationTime,
+            });
 
-          const response = {
-            accessToken,
-            userData: { ...user, password: undefined },
-          };
+            const response = {
+              accessToken,
+              userData: { ...user, password: undefined },
+            };
 
-          res.status(200).send(response);
+            res.status(200).send(response);
+          } else {
+            error = {
+              message: ["username or Password is Invalid"],
+            };
+
+            res.status(400).send(error);
+          }
         } else {
-          error = {
-            message: ["username or Password is Invalid"],
-          };
-
-          res.status(400).send(error);
+          res.status(400).send({
+            status: 400,
+            message: "username or Password is Invalid",
+          });
         }
-      } else {
-        res.status(400).send({
-          status: 400,
-          message: "username or Password is Invalid",
-        });
-      }
-    });
-  });
+      });
+    }
+  );
 });
 
 app.post("/auth/refresh", jwtRefreshTokenValidate, (req, res) => {});
