@@ -241,7 +241,7 @@ app.delete("/deleteimg/:filename", (req, res) => {
 
 // ################ get Stock Itech ##############
 app.post("/getStockItech", (req, res) => {
-  for (let i = 1; i < 10; i++) {
+  for (let i = 1; i < 11; i++) {
     let data = JSON.stringify({
       BranchID: i,
     });
@@ -376,6 +376,17 @@ app.post("/getStockItech", (req, res) => {
             );
           });
           console.log("Branch 6 Successsfully.");
+        } else if (i == 10) {
+          response.data.product.forEach(async (row) => {
+            connection.query(
+              `UPDATE productitech SET stock_bangna = ? WHERE productCode = ?`,
+              [row.numberStock, row.productCode],
+              function (err) {
+                if (err) throw err;
+              }
+            );
+          });
+          console.log("Branch 10 Successsfully.");
         }
       })
       .catch((error) => {
@@ -398,7 +409,8 @@ app.put("/syncItechtoAdmin", (req, res) => {
     p1.stock_thefloat = p2.stock_thefloat, 
     p1.stock_rangsit = p2.stock_rangsit,
     p1.stock_bangsaen = p2.stock_bangsaen, 
-    p1.stock_rama2 = p2.stock_rama2 
+    p1.stock_rama2 = p2.stock_rama2,
+    p1.stock_bangna = p2.stock_bangna  
     WHERE p1.product_id = p2.productCode`,
     (err) => {
       if (err) {
@@ -416,7 +428,7 @@ app.put("/syncItechtoAdmin", (req, res) => {
 // ################ Update Stock ##############
 app.put("/update_stock", (req, res) => {
   connection.query(
-    "UPDATE products SET status = 'N' WHERE (stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) = 0",
+    "UPDATE products SET status = 'N' WHERE (stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2+stock_bangna) = 0",
     (err) => {
       if (err) throw err;
       res.send("สถานะสินค้าอัพเดท.");
