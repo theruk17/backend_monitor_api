@@ -465,6 +465,7 @@ const tabNames = [
   "M-PAD",
   "MICE",
   "SINK",
+  "HOLDER",
 ];
 const range = "A3:AC";
 
@@ -866,6 +867,25 @@ app.get("/getdatasheet", async (req, res) => {
               connection.query(
                 `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
                 [row[0], row[18], row[0], row[18]],
+                function (err) {
+                  if (err) throw err;
+                }
+              );
+              break;
+            case "HOLDER":
+              connection.query(
+                `INSERT INTO pd_holder (holder_id, sku, holder_brand, holder_model) VALUES (?, ?, ?, ?) 
+              ON DUPLICATE KEY UPDATE holder_id = ?, sku = ?`,
+                [row[0], row[17], row[16], row[1], row[0], row[17]],
+                function (err) {
+                  if (err) throw err;
+                  console.log(index++ + `. ${row[1]}`);
+                }
+              );
+              //------------------------------------------------
+              connection.query(
+                `INSERT INTO products (product_id, sku) VALUES (?, ?) ON DUPLICATE KEY UPDATE product_id = ?, sku = ?`,
+                [row[0], row[17], row[0], row[17]],
                 function (err) {
                   if (err) throw err;
                 }
@@ -1416,6 +1436,41 @@ app.put("/edit_s/:id", (req, res) => {
 app.delete("/admin_del_s/:id", (req, res) => {
   const id = req.params.id;
   connection.query("DELETE FROM pd_sink WHERE sku = ?", id, (error) => {
+    if (error) throw error;
+    res.send("Delete Data Successsfully");
+  });
+});
+
+//----------------- HOLDER ----------------
+
+app.get("/holder", (req, res) => {
+  connection.query(
+    `SELECT * FROM pd_holder p1 
+    LEFT JOIN products p2 ON p2.product_id = p1.holder_id
+    WHERE p2.status="Y" ORDER BY p1.holder_brand, p1.holder_model, p2.product_minprice ASC`,
+    function (err, results) {
+      res.send(results);
+    }
+  );
+});
+
+app.put("/edit_holder/:id", (req, res) => {
+  const { id } = req.params;
+  const { brand, model, href } = req.body;
+  connection.query(
+    `UPDATE pd_holder SET holder_brand = ?, holder_model = ?, 
+    holder_href = ? WHERE sku = ?`,
+    [brand, model, href, id],
+    (err) => {
+      if (err) throw err;
+      res.send("Data updated successsfully");
+    }
+  );
+});
+
+app.delete("/admin_del_holder/:id", (req, res) => {
+  const id = req.params.id;
+  connection.query("DELETE FROM pd_holder WHERE sku = ?", id, (error) => {
     if (error) throw error;
     res.send("Delete Data Successsfully");
   });
