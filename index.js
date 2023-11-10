@@ -515,7 +515,7 @@ app.get("/getdatasheet", async (req, res) => {
             case "UPDATE MNT DATA":
               connection.query(
                 `INSERT INTO pd_monitor (mnt_id, sku, mnt_brand, mnt_model, mnt_resolution, mnt_size, mnt_panel, mnt_refresh_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE mnt_id = ?, sku = ?, mnt_resolution = ?, mnt_size = ?, mnt_panel = ?, mnt_refresh_rate = ?`,
+              ON DUPLICATE KEY UPDATE mnt_id = ?, sku = ?`,
                 [
                   row[0],
                   row[24],
@@ -528,10 +528,6 @@ app.get("/getdatasheet", async (req, res) => {
 
                   row[0],
                   row[24],
-                  row[17],
-                  row[18],
-                  row[19],
-                  row[20],
                 ],
                 function (err) {
                   if (err) throw err;
@@ -580,7 +576,7 @@ app.get("/getdatasheet", async (req, res) => {
             case "NOTEBOOK":
               connection.query(
                 `INSERT INTO pd_nb (nb_id, sku, nb_group, nb_brand, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE nb_id = ?, sku = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz= ?, nb_storage = ?, nb_os = ?`,
+              ON DUPLICATE KEY UPDATE nb_id = ?, sku = ?, nb_group = ?`,
                 [
                   row[0],
                   row[28],
@@ -598,13 +594,6 @@ app.get("/getdatasheet", async (req, res) => {
                   row[0],
                   row[28],
                   row[17],
-                  row[18],
-                  row[19],
-                  row[21],
-                  row[22],
-                  row[23],
-                  row[24],
-                  row[25],
                 ],
                 function (err) {
                   if (err) throw err;
@@ -726,7 +715,7 @@ app.get("/getdatasheet", async (req, res) => {
               } else if (a1 === "KEYCAP") {
                 connection.query(
                   `INSERT INTO pd_keycap (kc_id, sku, kc_group, kc_brand, kc_model) VALUES (?, ?, ?, ?, ?) 
-                ON DUPLICATE KEY UPDATE kc_id = ?, sku = ?, kc_group = ?, kc_brand = ?`,
+                ON DUPLICATE KEY UPDATE kc_id = ?, sku = ?, kc_group = ?`,
                   [
                     row[0],
                     row[18],
@@ -737,7 +726,6 @@ app.get("/getdatasheet", async (req, res) => {
                     row[0],
                     row[18],
                     row[11],
-                    row[17],
                   ],
                   function (err) {
                     if (err) throw err;
@@ -758,7 +746,7 @@ app.get("/getdatasheet", async (req, res) => {
             case "CHAIR":
               connection.query(
                 `INSERT INTO pd_chair (ch_id, sku, ch_group, ch_brand, ch_model) VALUES (?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE ch_id = ?, sku = ?, ch_group = ?, ch_brand = ?`,
+              ON DUPLICATE KEY UPDATE ch_id = ?, sku = ?, ch_group = ?`,
                 [
                   row[0],
                   row[17],
@@ -769,7 +757,6 @@ app.get("/getdatasheet", async (req, res) => {
                   row[0],
                   row[17],
                   row[11],
-                  row[16],
                 ],
                 function (err) {
                   if (err) throw err;
