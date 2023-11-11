@@ -693,18 +693,17 @@ app.get("/getdatasheet", async (req, res) => {
               if (a1 === "KEYBOARD") {
                 connection.query(
                   `INSERT INTO pd_kb (kb_id, sku, kb_connect, kb_group, kb_brand, kb_model) VALUES (?, ?, ?, ?, ?, ?) 
-                ON DUPLICATE KEY UPDATE kb_id = ?, sku = ?, kb_connect = ?, kb_group = ?`,
+                ON DUPLICATE KEY UPDATE kb_id = ?, sku = ?, kb_group = ?`,
                   [
                     row[0],
                     row[18],
-                    row[9],
+                    row[11],
                     row[12],
                     row[17],
                     row[1],
 
                     row[0],
                     row[18],
-                    row[9],
                     row[12],
                   ],
                   function (err) {
