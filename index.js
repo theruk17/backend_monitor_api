@@ -576,7 +576,7 @@ app.get("/getdatasheet", async (req, res) => {
             case "NOTEBOOK":
               connection.query(
                 `INSERT INTO pd_nb (nb_id, sku, nb_group, nb_brand, nb_model, nb_cpu, nb_vga, nb_ram, nb_size, nb_hz, nb_storage, nb_os) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-              ON DUPLICATE KEY UPDATE nb_id = ?, sku = ?, nb_group = ?`,
+              ON DUPLICATE KEY UPDATE nb_id = ?, sku = ?, nb_group = ?, nb_cpu = ?, nb_vga = ?, nb_ram = ?, nb_size = ?, nb_hz = ?, nb_storage = ?, nb_os = ?`,
                 [
                   row[0],
                   row[28],
@@ -594,6 +594,13 @@ app.get("/getdatasheet", async (req, res) => {
                   row[0],
                   row[28],
                   row[17],
+                  row[18],
+                  row[19],
+                  row[21],
+                  row[22],
+                  row[23],
+                  row[24],
+                  row[25],
                 ],
                 function (err) {
                   if (err) throw err;
@@ -935,7 +942,7 @@ app.post("/admin_data", jwtValidate, (req, res) => {
   const { t_name, c_name } = req.body;
   connection.query(
     `SELECT p1.*,p2.*,
-		SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2) AS sumstock,i.url AS url_main 
+		SUM(stock_nny+stock_ramintra+stock_bangphlat+stock_thefloat+stock_rangsit+stock_bangsaen+stock_rama2+stock_bangna) AS sumstock,i.url AS url_main 
     FROM pd_${t_name} p1 
     LEFT JOIN products p2 ON p2.product_id = p1.${c_name}_id 
     LEFT JOIN (SELECT product_id,url FROM images_product WHERE sort = 0) i ON i.product_id = p1.${c_name}_id
