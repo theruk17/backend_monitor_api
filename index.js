@@ -1017,7 +1017,7 @@ app.get("/case", (req, res) => {
   connection.query(
     `SELECT * FROM pd_case p1
     LEFT JOIN products p ON p.product_id = p1.case_id 
-    WHERE p.status="Y" ORDER BY CASE p1.case_group WHEN "ZONE D" THEN 1 WHEN "ZONE C" THEN 2 WHEN "ZONE A" THEN 3 WHEN "ZONE B" THEN 4 WHEN "ZONE EXPENSIVE" THEN 5 WHEN "ZONE ITX" THEN 6 end, 
+    WHERE p.status="Y" ORDER BY CASE p1.case_group WHEN "ZONE D" THEN 1 WHEN "ZONE C" THEN 2 WHEN "ZONE A" THEN 3 WHEN "ZONE B" THEN 4 WHEN "PREMIUM" THEN 5 WHEN "ZONE ITX" THEN 6 end, 
     p1.case_brand, p1.case_model, p1.case_color ASC`,
     function (err, results) {
       res.send(results);
